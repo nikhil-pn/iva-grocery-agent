@@ -19,7 +19,7 @@ import { txUrl } from './config.mjs';
 import { watchCommand, rememberHunt, startWatchScheduler, WATCH_COMMANDS } from './watch.mjs'; // /watch daily alert
 import { publishDeals, dealsReply } from './arkiv.mjs';
 import { CITIES, cityOf } from './cities.mjs';
-import { zeptoConnected, prepareZeptoOrder, hasPending, confirmZeptoOrder, cancelPending, trackZeptoOrder, friendlyZeptoError } from './zepto/order.mjs'; // Zepto: "order" -> YES -> COD order // Arkiv: expiring public deal feed
+import { zeptoConnected, prepareZeptoOrder, hasPending, confirmZeptoOrder, cancelPending, trackZeptoOrder, friendlyZeptoError, zeptoPaymentStatus } from './zepto/order.mjs'; // Zepto: "order" -> YES -> COD order // Arkiv: expiring public deal feed
 
 const run = promisify(execFile);
 
@@ -163,7 +163,7 @@ async function zeptoOrder(chatId) {
     const lines = o.lines.map((l) => `• ${esc(l.name)} (${esc(l.pack || '')})${l.packs > 1 ? ` ×${l.packs}` : ''}: ₹${Math.round(l.price)}`).join('\n');
     const miss = o.missing.length ? `\n⚠️ Not on Zepto here: ${esc(o.missing.join(', '))}` : '';
     const brainLine = o.receipt ? `\n🧠 Products picked by 0G: <code>${esc(o.receipt.requestId)}</code>` : '';
-    await edit(chatId, m.message_id, `🛒 <b>Your Zepto order</b> (cash on delivery)\n${lines}${miss}\n\n<b>Zepto's bill:</b>\n${esc(o.preview).slice(0, 1500)}${brainLine}\n\nReply <b>YES</b> within 3 minutes to place this order, or <b>NO</b> to cancel.`);
+    await edit(chatId, m.message_id, `🛒 <b>Your Zepto order</b>\n${lines}${miss}\n\n<b>Zepto's bill:</b>\n${esc(o.preview).trim().slice(0, 1500)}\n💳 Payment: ${esc(o.methods)}${brainLine}\n\nReply <b>YES</b> within 3 minutes to place this order, or <b>NO</b> to cancel.`);
   } catch (e) {
     console.error('[zepto]', e);
     await edit(chatId, m.message_id, `😕 Couldn't prepare the Zepto order: ${esc(friendlyZeptoError(e))}`);
@@ -175,11 +175,32 @@ async function zeptoConfirm(chatId) {
   const m = await send(chatId, '⏳ Placing your order on Zepto…');
   try {
     const o = await confirmZeptoOrder(chatId);
-    await edit(chatId, m.message_id, `✅ <b>Order placed on Zepto</b> (cash on delivery)${o.orderId ? ` · #${esc(o.orderId)}` : ''}\n\n${esc(o.text).slice(0, 1500)}\n\nSend /track for the delivery status.`);
+    if (o.method === 'link') {
+      await edit(chatId, m.message_id, `🧾 <b>Order created on Zepto</b>${o.orderId ? ` · #${esc(o.orderId)}` : ''}\n${o.payUrl ? `👉 <a href="${esc(o.payUrl)}"><b>Pay securely on Zepto (UPI / card)</b></a>` : esc(o.text).slice(0, 800)}\n\nI'll confirm here as soon as Zepto sees your payment.`);
+      if (o.orderId) watchPayment(chatId, o.orderId);
+    } else {
+      await edit(chatId, m.message_id, `✅ <b>Order placed on Zepto</b> (cash on delivery)${o.orderId ? ` · #${esc(o.orderId)}` : ''}\n\n${esc(o.text).slice(0, 1500)}\n\nSend /track for the delivery status.`);
+    }
   } catch (e) {
     console.error('[zepto]', e);
     await edit(chatId, m.message_id, `😕 The order did not go through: ${esc(friendlyZeptoError(e))}`);
   }
+}
+
+/** After a payment-link order: check Zepto every 15 s for up to 10 min and report the outcome. */
+function watchPayment(chatId, orderId) {
+  let n = 0;
+  const tick = async () => {
+    n++;
+    try {
+      const st = await zeptoPaymentStatus(orderId);
+      if (st.state === 'paid') return send(chatId, `✅ <b>Paid. Your Zepto order is confirmed.</b>\nSend /track for the delivery status.`);
+      if (st.state === 'failed') return send(chatId, `❌ Zepto says the payment didn't go through. Nothing will be delivered.\n${esc(st.text).slice(0, 300)}`);
+    } catch (e) { console.error('[zepto] payment status', e.message); }
+    if (n < 40) setTimeout(tick, 15_000);
+    else send(chatId, '⌛ I stopped waiting for the payment. Send /track to check the order.');
+  };
+  setTimeout(tick, 15_000);
 }
 
 async function zeptoTrack(chatId) {
