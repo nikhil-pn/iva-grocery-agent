@@ -132,7 +132,9 @@ async function matchWithModel(items, lists, brain, receipts) {
     for (const s of SHOPS) {
       const sel = row[letter[s.id]];
       const p = sel && byCode[sel.code];
-      picks[i][s.id] = p ? { p, packs: Math.max(1, Math.min(10, Number(sel.packs) || packsFor(items[i], p))) } : null;
+      // the model picks WHICH product; pack count is arithmetic, so compute it when sizes are known
+      const sized = (items[i].grams && p?.grams) || (items[i].pieces && p?.pieces);
+      picks[i][s.id] = p ? { p, packs: sized ? packsFor(items[i], p) : Math.max(1, Math.min(10, Number(sel.packs) || 1)) } : null;
     }
   }
   return { picks, tip: j.tip || '' };
