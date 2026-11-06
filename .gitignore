@@ -8,3 +8,4 @@ secrets/
 data/
 research/
 .DS_Store
+.claude/
