@@ -1,14 +1,32 @@
 {
- "exportedAt": "2026-11-06T15:36:04.330Z",
+ "exportedAt": "2026-11-06T18:48:53.655Z",
  "summary": {
   "income0G": 5,
   "deposited0G": 1.789961,
-  "inferences": 12,
-  "inferenceCost0G": 0.093293,
-  "sealedInferences": 6,
+  "inferences": 14,
+  "inferenceCost0G": 0.119213,
+  "sealedInferences": 8,
   "hunts": 3
  },
  "events": [
+  {
+   "type": "inference",
+   "at": "2026-11-06T18:32:12.476Z",
+   "requestId": "5acea57c-d35f-409a-9635-7824d38729bb",
+   "model": "glm-5.3",
+   "cost0G": 0.02223296,
+   "tier": "rich",
+   "sealed": true
+  },
+  {
+   "type": "inference",
+   "at": "2026-11-06T18:31:36.593Z",
+   "requestId": "5eddd06e-760f-41ce-81e4-34d2b1d64ca4",
+   "model": "glm-5.3",
+   "cost0G": 0.00368714,
+   "tier": "rich",
+   "sealed": true
+  },
   {
    "type": "income",
    "at": "2026-11-06T15:13:53.284Z",
