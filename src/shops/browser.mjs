@@ -37,6 +37,12 @@ export async function contextFor(shop, lat, lng, setup) {
   });
   if (setup) await setup(ctx);
   contexts.set(key, ctx);
+  // keep memory bounded: close the oldest location contexts beyond 12
+  while (contexts.size > 12) {
+    const [oldKey, oldCtx] = contexts.entries().next().value;
+    contexts.delete(oldKey);
+    oldCtx.close().catch(() => {});
+  }
   return ctx;
 }
 
