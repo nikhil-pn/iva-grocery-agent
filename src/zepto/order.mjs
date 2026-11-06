@@ -117,7 +117,20 @@ export async function prepareZeptoOrder(chatId, items, { addressId }) {
   const missing = items.filter((_, i) => !picks[i]).map((i) => i.want || i.query);
   pending.set(String(chatId), { at: Date.now(), addressId, lines });
   logEvent('zepto_preview', { items: lines.length, requestId: receipt?.requestId || null });
-  return { lines, missing, preview: clean(text(preview)), methods, receipt };
+  return { lines, missing, preview: summarizeBill(text(preview)), methods, receipt };
+}
+
+/** Keep only the lines a person needs from Zepto's preview (address, payment, totals). */
+function summarizeBill(t) {
+  const plain = String(t).replace(/\*\*/g, '');
+  const keep = [];
+  const lines = plain.split('\n').map((l) => l.trim());
+  const at = lines.findIndex((l) => /^📍?\s*Delivering to/i.test(l));
+  if (at >= 0) keep.push(`📍 ${lines[at + 1] || lines[at].replace(/^📍?\s*Delivering to:?/i, '').trim()}`.slice(0, 120));
+  for (const l of lines) {
+    if (/^(Payment Method|Item Total|Delivery Fee|Handling|Small Cart|Platform|Surge|Rain|Late Night|Amount To Pay|Total Savings)/i.test(l)) keep.push(l);
+  }
+  return keep.length ? keep.join('\n') : clean(t).slice(0, 600);
 }
 
 export function hasPending(chatId) {
