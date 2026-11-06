@@ -58,7 +58,7 @@ Before every job Iva reads her own balance: the Router `/account/funds` endpoint
 
 | Tier | When | Brain |
 |---|---|---|
-| 🟢 **rich** | ≥ 1 0G of compute | `glm-5.3` running **privately in a TEE** (`verify_tee`, attested), plus vision for photo lists and audio for voice notes |
+| 🟢 **rich** | ≥ 1 0G of compute | `glm-5.3` **sealed** end-to-end into a TEE provider, plus vision for photo lists and audio for voice notes |
 | 🟡 **lean** | ≥ 0.2 0G | `qwen3.7-flash` (~50× cheaper), with cheap vision still on |
 | 🔴 **survival** | below that, today's cap reached, or 0G answers 402/429 | **no LLM.** Plain keyword matching and price sorting. Typed lists still work, and paid hunts refill her. |
 
@@ -71,14 +71,20 @@ Iva can no longer read photos or voice notes, and she can't tell that "Amul Salt
 but "Amul Butter Cookies" isn't. Her survival mode shows exactly that. She also loses the way to pay for her
 own thinking, so she stops being an agent and becomes a script.
 
-## Proof (filled in from the live run)
+## Proof: the live run on 0G mainnet (2026-11-06)
 
 | Step | Proof |
 |---|---|
-| Customer payment → Iva's wallet | _tx hash_ |
-| Iva `depositFor(iva)` → her 0G compute | _tx hash_ |
-| Inference paid from that balance | _request_id(s)_ |
-| Degrades when low (lean → survival) | _screenshot / log_ |
+| 💰 Customer pays Iva 4.8 0G (wallet → Iva) | [`0xdba49fc9…a3b51e`](https://chainscan.0g.ai/tx/0xdba49fc9f870bb7620adf65a6e4fef7c57ae1a7ace750905886c233befa3b51e) |
+| ⚡ **7 s later Iva signs `depositFor` herself**: 1.6 0G → her 0G compute account | [`0xce31fb72…cbec6`](https://chainscan.0g.ai/tx/0xce31fb72627472c3eb489c47a1597f207c3801ceb541f0e4bd78e20f466cbec6) |
+| 🧠 Inference paid from that balance (go/no-go, `qwen3.7-flash`, 0.000188 0G) | request `253fd0a9-eb8b-46ec-bcd9-2d4ca1018e27` |
+| 🧠 A rich-tier hunt: `glm-5.3`, sealed into a TEE provider (`X-0g-E2ee: sealed`, provider `0xD179…E503`, Intel TDX attested) | requests `15a5ecb3-3c05-4f6e-92c9-1001c73af475`, `5f22cbcf-89ff-403e-8d5e-656787226141` (0.029 0G total) |
+| 🛑 Spend cap | API key "Iva": `credit_limit 0.5`, `reset_period daily` (read back from `GET /v1/api-keys`) |
+
+Iva's 0G compute account is `0x91ecffc5fcbb3f568173fc5a74045603533d172b`: the pc.0g.ai account whose capped API key
+she holds, set to bill in 0G. Her wallet `0xbbd2…918d` earns from customers and signs the deposits into it
+(`depositFor(0x91ec…)` works for any address). After her first billed call, the 0G Router pulled 0.5 0G from
+the Payment Layer vault into its own ledger by itself, as documented.
 
 ## Run it yourself
 
