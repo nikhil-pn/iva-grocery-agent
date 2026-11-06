@@ -15,6 +15,7 @@ import { hunt as realHunt } from './hunt.mjs';
 import { SHOPS } from './shops/index.mjs';
 import { receiptLine } from './format.mjs';
 import { user, updateUser, logEvent } from './ledger.mjs';
+import { cityOf } from './cities.mjs';
 
 const FILE = join(cfg.dataDir, 'watches.json');
 export const MAX_ITEMS = 8;
@@ -259,7 +260,7 @@ function watchSummary(chatId) {
   const w = getWatch(chatId);
   if (!w) return 'You have no watch. Send <code>/watch 12 eggs, 1 kg onion</code>, or /watch right after a hunt to save that list.';
   const L = [`👀 <b>Your watch</b>`, `🧺 ${esc(w.list)}`,
-    `📍 ${w.cityName || `${w.lat.toFixed(3)}, ${w.lng.toFixed(3)}`} · every day after ${RUN_AT} IST · 1 hunt (${cfg.huntFee} 0G) per check`];
+    `📍 ${w.cityName || cityOf({ lat: w.lat, lng: w.lng })} · every day after ${RUN_AT} IST · 1 hunt (${cfg.huntFee} 0G) per check`];
   if (w.paused) L.push('⏸ Paused — you are out of hunts. /pay and it resumes.');
   const h = (w.history || []).slice(-7);
   if (h.length) L.push(`📊 ${h.map((x) => `${shortDay(x.at)} ${LABEL[x.best] || x.best} ₹${x.total}`).join(' → ')}`);
@@ -279,7 +280,7 @@ export async function watchCommand(chatId, cmd, arg, { send, edit }) {
   }
   // /watch [list]
   const u = user(chatId);
-  const loc = { lat: u.lat ?? cfg.defaultLat, lng: u.lng ?? cfg.defaultLng, cityName: u.cityName || (u.lat ? null : 'Mumbai') };
+  const loc = { lat: u.lat ?? cfg.defaultLat, lng: u.lng ?? cfg.defaultLng, cityName: cityOf(u) };
   let list = arg.trim();
   if (!list) {
     const last = lastList(chatId);

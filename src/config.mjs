@@ -27,7 +27,7 @@ const num = (k, d) => Number(env(k, String(d)));
 export const cfg = {
   telegramToken: env('TELEGRAM_BOT_TOKEN'),
   botUsername: env('TELEGRAM_BOT_USERNAME', ''),
-  payPageUrl: env('PAY_PAGE_URL', 'https://nikhil-pn.github.io/iva-grocery-agent/pay.html'),
+  payPageUrl: env('PAY_PAGE_URL', 'https://iva-grocery-agent.vercel.app/pay'),
 
   ivaAddress: env('IVA_ADDRESS'),
   ivaPrivateKey: env('IVA_PRIVATE_KEY'),

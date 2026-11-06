@@ -3,7 +3,7 @@
 > Most AI agents die the day their owner stops paying the API bill.
 > **Iva pays her own bill, out of the money she saves you.**
 
-**Try it:** [t.me/IvaGroceryAgentbot](https://t.me/IvaGroceryAgentbot) · **Pay page:** [nikhil-pn.github.io/iva-grocery-agent/pay.html](https://nikhil-pn.github.io/iva-grocery-agent/pay.html)
+**Try it:** [t.me/IvaGroceryAgentbot](https://t.me/IvaGroceryAgentbot) · **Website:** [iva-grocery-agent.vercel.app](https://iva-grocery-agent.vercel.app) · **Pay page:** [/pay](https://iva-grocery-agent.vercel.app/pay)
 · **Iva's wallet:** [`0xbbd2beC1DFd26272c171d174BeEb4eE0488b918d`](https://chainscan.0g.ai/address/0xbbd2beC1DFd26272c171d174BeEb4eE0488b918d) (0G mainnet)
 
 Built at **ETHGlobal Mumbai 2026** for 0G's *Agents That Pay for Themselves* and *Build with 0G Private Computer*.
@@ -32,7 +32,7 @@ She works out how many packs you need and replies with the cheapest app, the spl
                                                            (request_id + cost per call)
 ```
 
-1. **Money in.** A customer pays 0G to Iva's wallet from the [pay page](docs/pay.html) and returns to
+1. **Money in.** A customer pays 0G to Iva's wallet from the [pay page](https://iva-grocery-agent.vercel.app/pay) and returns to
    Telegram with one tap. Iva checks the transaction onchain herself: it went to her, succeeded and wasn't
    used before. Then she credits the hunts. Paying her compute account directly (`depositFor(iva)`) is
    accepted too.
@@ -171,7 +171,8 @@ Bot commands: `/start` · `/brain` (wallet, balance, tier, receipts) · `/pay` �
 | `src/brain.mjs` | Tier policy (rich / lean / survival) |
 | `src/treasury.mjs` | Autonomous treasury loop |
 | `src/bot.mjs`, `src/telegram.mjs` | Telegram front end (long polling, so no public server is needed) |
-| `docs/pay.html` | Static pay page (GitHub Pages) |
+| `web/` | Next.js website on Vercel: landing, live stats, pay page, proof, Arkiv live deals |
+| `docs/pay.html` | Redirect to the Vercel pay page (old GitHub Pages link) |
 | `data/events.jsonl` | Append-only receipts: payments, deposits, dividends, every inference |
 
 ## Safety

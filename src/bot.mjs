@@ -17,16 +17,11 @@ import { closeAll } from './shops/browser.mjs';
 import { user, updateUser, txUsed, markTx, logEvent, recentEvents, totals, recordIncome } from './ledger.mjs';
 import { txUrl } from './config.mjs';
 import { watchCommand, rememberHunt, startWatchScheduler, WATCH_COMMANDS } from './watch.mjs'; // /watch daily alert
-import { publishDeals, dealsReply } from './arkiv.mjs'; // Arkiv: expiring public deal feed
+import { publishDeals, dealsReply } from './arkiv.mjs';
+import { CITIES, cityOf } from './cities.mjs'; // Arkiv: expiring public deal feed
 
 const run = promisify(execFile);
 
-const CITIES = {
-  mumbai: [19.0662, 72.8697], bandra: [19.0596, 72.8295], andheri: [19.1136, 72.8697],
-  pune: [18.5204, 73.8567], bengaluru: [12.9716, 77.5946], bangalore: [12.9716, 77.5946],
-  delhi: [28.6139, 77.209], gurugram: [28.4595, 77.0266], hyderabad: [17.385, 78.4867],
-  chennai: [13.0827, 80.2707], kochi: [10.0261, 76.3125], kolkata: [22.5726, 88.3639],
-};
 
 const fmt0G = (x) => `${Number(x).toFixed(Number(x) < 1 ? 2 : 1)} 0G`;
 
@@ -50,7 +45,7 @@ const KEYBOARD = { reply_markup: { resize_keyboard: true, is_persistent: true, k
 const WELCOME = (u) => `👋 <b>Hi, I'm Iva.</b> Send me your shopping list and I'll find the cheapest basket on <b>Blinkit, Instamart and Zepto</b>.
 
 Try: <i>${EXAMPLE}</i>
-📍 I'm hunting near ${u.cityName || (u.lat ? 'your location' : 'Mumbai')}. Tap "Share my location" to change it.
+📍 I'm hunting near ${cityOf(u)}. Tap "Share my location" to change it.
 
 ${u.freeUsed < cfg.freeHunts ? '🎁 Your first hunt is free.' : `💳 A hunt costs ${cfg.huntFee} 0G (${rs(cfg.huntFee)}).`} I pay for my own AI brain on 0G with what I earn.
 
@@ -60,7 +55,7 @@ function meText(u) {
   const free = u.freeUsed < cfg.freeHunts ? cfg.freeHunts - u.freeUsed : 0;
   return `🙋 <b>${u.credits}</b> paid hunt${u.credits === 1 ? '' : 's'}${free ? ` + ${free} free` : ''} left.
 Hunts so far: ${u.hunts || 0} · you saved ≈ ₹${u.savedRs || 0}.
-📍 ${u.cityName || (u.lat ? 'your shared location' : 'Mumbai (default)')}`;
+📍 ${cityOf(u)}`;
 }
 
 const SMALL_TALK = /^(hi+|hello+|hey+|yo|ok(ay)?|thanks?|thank you|thx|ty|good (morning|night|evening|afternoon)|hola|namaste|test|start|help|menu|\?)[!. ]*$/i;
