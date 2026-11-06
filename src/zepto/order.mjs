@@ -16,17 +16,29 @@ const pending = new Map(); // chatId -> { at, addressId, lines, total }
 
 export const zeptoConnected = () => isConnected();
 
+// Writes that change the real world are never retried: a retry could double-order,
+// or land in a fresh MCP session that has no cart.
+const NO_RETRY = new Set(['create_order', 'create_online_payment_order', 'create_wallet_order', 'create_upi_reserve_pay_order', 'update_cart']);
+export let lastRaw = null; // last raw Zepto response, for debugging
+
 async function call(name, args = {}) {
   for (let attempt = 0; attempt < 2; attempt++) {
+    let r;
     try {
       client ||= await connectZepto({ interactive: false });
-      const r = await client.callTool({ name, arguments: args });
-      if (r.isError) throw new Error(text(r).slice(0, 300) || `${name} failed`);
-      return r;
+      r = await client.callTool({ name, arguments: args });
     } catch (e) {
-      client = null; // reconnect once (expired session / token refresh)
-      if (attempt) throw e;
+      // transport problem (expired session, network): reconnect once, but only for safe calls
+      client = null;
+      if (attempt || NO_RETRY.has(name)) throw e;
+      continue;
     }
+    lastRaw = { name, args, text: text(r), structured: r.structuredContent || null, isError: !!r.isError };
+    if (r.isError) {
+      console.error(`[zepto] ${name} error:`, text(r).slice(0, 1500));
+      throw new Error(text(r).slice(0, 400) || `${name} failed`);
+    }
+    return r;
   }
 }
 const text = (r) => (r.content || []).map((c) => c.text || '').join('\n');
@@ -111,13 +123,19 @@ export async function prepareZeptoOrder(chatId, items, { addressId }) {
       name: p.name, price: p.price, mrp: p.mrp, packSize: p.packSize,
     })),
   });
-  const methods = clean(text(await call('get_payment_methods')));
-  const preview = await call('create_order', { confirmOrder: false, userAddressId: addressId });
+  // Which payment Zepto allows for THIS order: cash on delivery if offered, else its secure payment link.
+  const methodsText = text(await call('get_payment_methods'));
+  const codOff = /Cash on Delivery[^\n]*not available/i.test(methodsText) || !/Cash on Delivery/i.test(methodsText.split('Unavailable')[0]);
+  const linkOn = /PAYMENT_LINK|create_online_payment_order/i.test(methodsText.split('Unavailable')[0]);
+  const method = !codOff ? 'cod' : linkOn ? 'link' : null;
+  if (!method) throw new Error('Zepto offers no payment method I can use for this order (no cash on delivery, no payment link).');
+  const methods = method === 'cod' ? 'Cash on delivery' : 'Pay online (UPI / cards) with Zepto\'s secure link, since cash on delivery isn\'t available for this order';
+  const preview = await call(method === 'cod' ? 'create_order' : 'create_online_payment_order', { confirmOrder: false, userAddressId: addressId });
   const lines = chosen.map(({ p, packs, item }) => ({ want: item.want || item.query, name: p.name, pack: p.packSize, packs, price: rupees(p.price) * packs }));
   const missing = items.filter((_, i) => !picks[i]).map((i) => i.want || i.query);
-  pending.set(String(chatId), { at: Date.now(), addressId, lines });
+  pending.set(String(chatId), { at: Date.now(), addressId, lines, method });
   logEvent('zepto_preview', { items: lines.length, requestId: receipt?.requestId || null });
-  return { lines, missing, preview: summarizeBill(text(preview)), methods, receipt };
+  return { lines, missing, preview: summarizeBill(text(preview)).replace(/^Payment Method:.*$/m, ''), methods, method, receipt };
 }
 
 /** Keep only the lines a person needs from Zepto's preview (address, payment, totals). */
@@ -138,16 +156,30 @@ export function hasPending(chatId) {
   return !!p && Date.now() - p.at < CONFIRM_MS;
 }
 
-/** Place the cash-on-delivery order. Only called after the user replied YES to the preview. */
+/** Place the order. Only called after the user replied YES to the preview. */
 export async function confirmZeptoOrder(chatId) {
   const p = pending.get(String(chatId));
   if (!p || Date.now() - p.at > CONFIRM_MS) { pending.delete(String(chatId)); throw new Error('That preview expired. Say "order" again.'); }
   pending.delete(String(chatId));
-  const r = await call('create_order', { confirmOrder: true, userAddressId: p.addressId });
-  const t = clean(text(r));
-  const orderId = (JSON.stringify(r.structuredContent || {}) + ' ' + text(r)).match(/order[_ ]?id["':\s]*([A-Za-z0-9-]{6,})/i)?.[1] || null;
-  logEvent('zepto_order', { items: p.lines.length, orderId });
-  return { text: t, orderId };
+  const tool = p.method === 'link' ? 'create_online_payment_order' : 'create_order';
+  const r = await call(tool, { confirmOrder: true, userAddressId: p.addressId });
+  const raw = text(r);
+  const sc = r.structuredContent || {};
+  const all = JSON.stringify(sc) + ' ' + raw;
+  const orderId = sc.orderId || sc.order_id || sc.id || all.match(/order\s*id["':\s]*([A-Za-z0-9-]{6,})/i)?.[1] || null;
+  const payUrl = sc.paymentLink || sc.paymentUrl || sc.payment_link || all.match(/https?:\/\/[^\s"'<>)\]]+/i)?.[0] || null;
+  logEvent('zepto_order', { items: p.lines.length, orderId, method: p.method });
+  return { text: clean(raw), orderId, payUrl, method: p.method };
+}
+
+/** One payment-status check for an online-payment order. Returns { state, text }. */
+export async function zeptoPaymentStatus(orderId) {
+  const r = await call('check_payment_status', { orderId, poll: false });
+  const t = text(r);
+  const s = (JSON.stringify(r.structuredContent || {}) + ' ' + t).toUpperCase();
+  const state = /SUCCESS|PAID|COMPLETED|CONFIRMED/.test(s) ? 'paid'
+    : /FAILED|CANCELLED|CANCELED|EXPIRED|DECLINED/.test(s) ? 'failed' : 'pending';
+  return { state, text: clean(t).slice(0, 600) };
 }
 
 export function cancelPending(chatId) { pending.delete(String(chatId)); }
