@@ -188,7 +188,8 @@ export function watchMessage(w, r, now = Date.now(), { credits = null } = {}) {
   L.push('');
   r.items.forEach((it, i) => {
     const opts = SHOPS.map((s) => ({ id: s.id, x: r.picks[i]?.[s.id] })).filter((o) => o.x)
-      .sort((a, c) => a.x.p.price * a.x.packs - c.x.p.price * c.x.packs);
+      // ties go to today's cheapest app, so the lines agree with the basket above
+      .sort((a, c) => a.x.p.price * a.x.packs - c.x.p.price * c.x.packs || (c.id === b.best) - (a.id === b.best));
     const name = esc(it.want || it.query);
     if (!opts.length) { L.push(`• ${name} — not found nearby`); return; }
     const o = opts[0];
