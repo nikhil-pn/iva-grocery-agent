@@ -1,0 +1,160 @@
+{
+ "exportedAt": "2026-11-06T15:36:04.330Z",
+ "summary": {
+  "income0G": 5,
+  "deposited0G": 1.789961,
+  "inferences": 12,
+  "inferenceCost0G": 0.093293,
+  "sealedInferences": 6,
+  "hunts": 3
+ },
+ "events": [
+  {
+   "type": "income",
+   "at": "2026-11-06T15:13:53.284Z",
+   "tx": "0x58eec12440bd324ce894e1c03a159259471838cf1368dfa15ed1650f0524bb67",
+   "amount0G": 0.2
+  },
+  {
+   "type": "deposit",
+   "at": "2026-11-06T15:13:30.643Z",
+   "tx": "0x5de7f01ae836e81731268f06638b7c99dfa96d6133e01b5aa3c6b9c671c48698",
+   "amount0G": 0.189961
+  },
+  {
+   "type": "hunt",
+   "at": "2026-11-06T14:38:20.497Z",
+   "cost0G": 0.028455019999999998,
+   "tier": "rich"
+  },
+  {
+   "type": "inference",
+   "at": "2026-11-06T14:38:19.715Z",
+   "requestId": "2a4ffab3-f933-4126-8514-19b2d14acfa2",
+   "model": "glm-5.3",
+   "cost0G": 0.02551634,
+   "tier": "rich",
+   "sealed": true
+  },
+  {
+   "type": "inference",
+   "at": "2026-11-06T14:37:24.069Z",
+   "requestId": "7dcbb0a0-881b-46a1-82c6-12f6cfc858cf",
+   "model": "glm-5.3",
+   "cost0G": 0.00293868,
+   "tier": "rich",
+   "sealed": true
+  },
+  {
+   "type": "hunt",
+   "at": "2026-11-06T14:34:42.074Z",
+   "cost0G": 0.01157014,
+   "tier": "rich"
+  },
+  {
+   "type": "inference",
+   "at": "2026-11-06T14:34:41.010Z",
+   "requestId": "54ebb129-a745-4b8e-929b-1b181620eeaf",
+   "model": "glm-5.3",
+   "cost0G": 0.00957798,
+   "tier": "rich",
+   "sealed": true
+  },
+  {
+   "type": "inference",
+   "at": "2026-11-06T14:34:20.607Z",
+   "requestId": "3b5f39cf-df54-4e5e-accc-256e06607540",
+   "model": "glm-5.3",
+   "cost0G": 0.00199216,
+   "tier": "rich",
+   "sealed": true
+  },
+  {
+   "type": "inference",
+   "at": "2026-11-06T14:23:25.197Z",
+   "requestId": "ad5f20df-f8e2-4853-b2d2-0e8ec5081e56",
+   "model": "qwen3-omni-flash",
+   "cost0G": 0.001113024617742712,
+   "tier": "rich",
+   "sealed": false
+  },
+  {
+   "type": "inference",
+   "at": "2026-11-06T14:23:15.986Z",
+   "requestId": "6ba8af6e-36e8-43cc-9ef7-21c27a4f4dd2",
+   "model": "qwen3-vl-plus",
+   "cost0G": 0.002149548544942884,
+   "tier": "rich",
+   "sealed": false
+  },
+  {
+   "type": "inference",
+   "at": "2026-11-06T14:22:58.817Z",
+   "requestId": "554a12ee-f59e-424d-8d03-ca83a4f73b97",
+   "model": "qwen3-vl-plus",
+   "cost0G": 0.002149548544942884,
+   "tier": "rich",
+   "sealed": false
+  },
+  {
+   "type": "inference",
+   "at": "2026-11-06T13:48:10.557Z",
+   "requestId": "5f22cbcf-89ff-403e-8d5e-656787226141",
+   "model": "glm-5.3",
+   "cost0G": 0.02522566,
+   "tier": "rich",
+   "sealed": true
+  },
+  {
+   "type": "inference",
+   "at": "2026-11-06T13:47:16.598Z",
+   "requestId": "15a5ecb3-3c05-4f6e-92c9-1001c73af475",
+   "model": "glm-5.3",
+   "cost0G": 0.00391974,
+   "tier": "rich",
+   "sealed": true
+  },
+  {
+   "type": "income",
+   "at": "2026-11-06T13:46:58.593Z",
+   "tx": "0xdba49fc9f870bb7620adf65a6e4fef7c57ae1a7ace750905886c233befa3b51e",
+   "amount0G": 4.8
+  },
+  {
+   "type": "inference",
+   "at": "2026-11-06T13:46:00.583Z",
+   "requestId": "9e470f95-519c-4e9e-bb6f-e570095dc8f6",
+   "model": "glm-5.3",
+   "cost0G": 0.01452938,
+   "tier": "rich"
+  },
+  {
+   "type": "inference",
+   "at": "2026-11-06T13:45:33.859Z",
+   "requestId": "d2fc71f0-1b8b-41d1-8edb-ae698b618d6d",
+   "model": "glm-5.3",
+   "cost0G": 0.00399368,
+   "tier": "rich"
+  },
+  {
+   "type": "inference",
+   "at": "2026-11-06T13:45:06.323Z",
+   "requestId": "253fd0a9-eb8b-46ec-bcd9-2d4ca1018e27",
+   "model": "qwen3.7-flash",
+   "cost0G": 0.000187627567030762,
+   "tier": "lean"
+  },
+  {
+   "type": "deposit",
+   "at": "2026-11-06T13:43:30.419Z",
+   "tx": "0xce31fb72627472c3eb489c47a1597f207c3801ceb541f0e4bd78e20f466cbec6",
+   "amount0G": 1.6
+  },
+  {
+   "type": "hunt",
+   "at": "2026-11-06T12:42:11.408Z",
+   "cost0G": 0,
+   "tier": "survival"
+  }
+ ]
+}
