@@ -1,12 +1,13 @@
 import { Suspense } from "react";
+import LiveDeals, { LiveDealsSkeleton } from "./components/LiveDeals";
 import LiveStats, { LiveStatsSkeleton } from "./components/LiveStats";
 import PayIva from "./components/PayIva";
 import receipts from "@/public/receipts.json";
 import {
+  ARKIV,
   BOT_URL,
   BOT_USERNAME,
   CHAIN,
-  COMFY,
   COMPUTE_ACCOUNT,
   DAILY_CAP_0G,
   HUNT_FEE_0G,
@@ -84,6 +85,9 @@ function Header() {
           <span aria-hidden>🧺</span> Iva
         </a>
         <nav className="flex items-center gap-1 text-sm">
+          <a href="#deals" className="hidden rounded-lg px-3 py-1.5 text-muted hover:text-fg sm:block">
+            Deals
+          </a>
           <a href="#live" className="hidden rounded-lg px-3 py-1.5 text-muted hover:text-fg sm:block">
             Live
           </a>
@@ -115,8 +119,8 @@ function Hero() {
       />
       <div className="relative mx-auto max-w-5xl px-5 pb-12 pt-12 md:pb-20 md:pt-24">
         <p className="inline-flex items-center gap-2 rounded-full border border-line bg-raised px-3 py-1 text-xs text-muted">
-          <span className="size-1.5 rounded-full bg-emerald-400" aria-hidden /> Live on 0G mainnet · ETHGlobal Mumbai
-          2026
+          <span className="size-1.5 rounded-full bg-emerald-400" aria-hidden /> Live on 0G mainnet + Arkiv · ETHGlobal
+          Mumbai 2026
         </p>
         <h1 className="mt-5 text-[2.15rem] font-extrabold leading-[1.08] tracking-tight text-balance md:text-6xl">
           Iva: the grocery agent that <span className="text-amber-300">pays for her own brain</span>
@@ -244,6 +248,50 @@ function HowItWorks() {
         </ol>
         <TelegramMock />
       </div>
+      <div className="mt-6 grid gap-3 md:grid-cols-2">
+        {[
+          [
+            "/watch",
+            "⏰",
+            "Save your list. Iva re-checks it every morning and tells you if it got cheaper. Each check costs 1 hunt, which funds her brain.",
+          ],
+          ["/deals", "🏷", "Live deals near you, read from Arkiv. Every deal expires on its own 6 h after the hunt that found it."],
+        ].map(([cmd, icon, d]) => (
+          <div key={cmd} className="card flex gap-4 p-4">
+            <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-raised text-xl" aria-hidden>
+              {icon}
+            </span>
+            <div>
+              <p className="font-mono font-semibold">{cmd}</p>
+              <p className="mt-1 text-sm text-muted">{d}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+function Deals() {
+  return (
+    <Section
+      id="deals"
+      kicker="Arkiv"
+      title="Live deals (from Arkiv)"
+      lead={
+        <>
+          After every hunt Iva publishes what she found to{" "}
+          <a href={ARKIV.site} {...ext} className="text-fg underline underline-offset-2">
+            Arkiv
+          </a>
+          . Grocery discounts last hours, so each deal expires on its own after {ARKIV.dealHours} h: an open feed anyone
+          can query, with no database to run. This list is read live from that feed.
+        </>
+      }
+    >
+      <Suspense fallback={<LiveDealsSkeleton />}>
+        <LiveDeals />
+      </Suspense>
     </Section>
   );
 }
@@ -374,8 +422,8 @@ function Proof() {
     <Section
       id="proof"
       kicker="Proof"
-      title="The live run on 0G mainnet"
-      lead="Every step is a real transaction or a real 0G request ID. Tap a hash to open it on chainscan."
+      title="The live run: 0G mainnet + Arkiv"
+      lead="Every step is a real transaction, entity or 0G request ID. Tap a hash to open it on its explorer."
     >
       <ol className="card divide-y divide-line overflow-hidden">
         {PROOF.map((p) => (
@@ -398,6 +446,16 @@ function Proof() {
                 <p key={id} className="mt-1 break-all font-mono text-xs text-muted">
                   request {id}
                 </p>
+              ))}
+              {p.links?.map((l) => (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  {...ext}
+                  className="mr-3 mt-1 inline-block font-mono text-xs text-sky-300 underline-offset-2 hover:underline"
+                >
+                  {l.label} ↗
+                </a>
               ))}
               {p.note && <p className="mt-1 text-xs text-muted">{p.note}</p>}
             </div>
@@ -444,71 +502,6 @@ function Proof() {
   );
 }
 
-function Comfy() {
-  const rows: [string, string, string?][] = [
-    ["Agent ID (AgenticID)", COMFY.agentId, COMFY.agentUrl || undefined],
-    [`${COMFY.tokenTicker} token`, COMFY.tokenAddress, COMFY.tokenAddress ? addrUrl(COMFY.tokenAddress) : undefined],
-    ["Compute share", COMFY.tokenAddress ? "ON: part of every trade's creator fee → her 0G compute" : ""],
-  ];
-  return (
-    <Section
-      id="comfy"
-      kicker="comfy"
-      title="A second income stream: Iva on comfy"
-      lead={
-        <>
-          <a href={LINKS.comfy} {...ext} className="text-fg underline underline-offset-2">
-            comfy
-          </a>{" "}
-          is the token launchpad on 0G mainnet that 0G recommends for agents. We&apos;re registering Iva there tonight.
-        </>
-      }
-    >
-      <div className="grid gap-3 md:grid-cols-2">
-        <div className="card p-5">
-          <ul className="space-y-3 text-sm text-muted">
-            <li>
-              <b className="text-fg">An onchain identity.</b> <code className="text-fg">comfy agent register</code> mints
-              Iva an AgenticID.
-            </li>
-            <li>
-              <b className="text-fg">{COMFY.tokenTicker} with the compute share on.</b> Part of the creator fee from
-              every trade lands as 0G credit in her 0G Payment Layer account, the same account her API key spends from.
-            </li>
-            <li>
-              <b className="text-fg">Honest status.</b> comfy&apos;s hire board is closed today (&quot;hire is coming
-              soon on comfy&quot;), so people hire Iva directly on Telegram, at {HUNT_FEE_0G} 0G a hunt. A token only adds
-              income when other people trade it, so the service fee stays her main income.
-            </li>
-          </ul>
-        </div>
-        <dl className="card divide-y divide-line overflow-hidden">
-          {rows.map(([k, v, href]) => (
-            <div key={k} className="flex items-center justify-between gap-3 px-5 py-4">
-              <dt className="text-sm text-muted">{k}</dt>
-              <dd className="min-w-0 text-right text-sm">
-                {v ? (
-                  href ? (
-                    <a href={href} {...ext} className="break-all font-mono text-xs text-sky-300 underline-offset-2 hover:underline">
-                      {v.length > 20 ? short(v, 8, 6) : v}
-                    </a>
-                  ) : (
-                    <span className="break-all font-mono text-xs">{v}</span>
-                  )
-                ) : (
-                  <span className="rounded-full border border-amber-400/40 bg-amber-400/10 px-2.5 py-0.5 text-xs font-semibold text-amber-200">
-                    coming soon
-                  </span>
-                )}
-              </dd>
-            </div>
-          ))}
-        </dl>
-      </div>
-    </Section>
-  );
-}
-
 function Faq() {
   const qa: [string, React.ReactNode][] = [
     [
@@ -539,11 +532,29 @@ function Faq() {
       "Is this the ETHGlobal Mumbai build?",
       <>
         Yes. Iva was built at ETHGlobal Mumbai 2026 for 0G&apos;s <i>Agents That Pay for Themselves</i> and{" "}
-        <i>Build with 0G Private Computer</i> tracks. The code is on{" "}
+        <i>Build with 0G Private Computer</i> tracks, and Arkiv&apos;s <i>Build on Arkiv</i> track. The code is on{" "}
         <a href={REPO_URL} {...ext} className="underline">
           GitHub
         </a>
         , and the bot you talk to is the one running from it.
+      </>,
+    ],
+    [
+      "Why Arkiv for the deals?",
+      <>
+        A deal is only true for a few hours. On Arkiv each one is an entity that expires {ARKIV.dealHours} h after the
+        hunt, so stale prices disappear without a cleanup job. Anyone can query the feed by city and item (filter on
+        Iva&apos;s wallet so nobody can spoof deals into it), and we run no database or API for it.
+      </>,
+    ],
+    [
+      "What's next?",
+      <>
+        A token for Iva on{" "}
+        <a href={LINKS.comfy} {...ext} className="underline">
+          comfy
+        </a>{" "}
+        as a second income stream for her compute. Not used yet; it&apos;s on the roadmap.
       </>,
     ],
     [
@@ -575,7 +586,8 @@ function Footer() {
     ["GitHub repo", REPO_URL],
     [`@${BOT_USERNAME}`, BOT_URL],
     ["0G", LINKS.zeroG],
-    ["comfy", LINKS.comfy],
+    ["Arkiv", LINKS.arkiv],
+    ["Iva's deals on Arkiv", `${ARKIV.explorer}/address/${IVA_WALLET}`],
     ["Iva's wallet", addrUrl(IVA_WALLET)],
     ["0G Payment Layer", addrUrl(PAYMENT_LAYER)],
   ];
@@ -608,6 +620,7 @@ export default function Home() {
       <main>
         <Hero />
         <HowItWorks />
+        <Deals />
         <MoneyLoop />
         <Section
           id="live"
@@ -637,7 +650,6 @@ export default function Home() {
           <PayIva />
         </Section>
         <Proof />
-        <Comfy />
         <Faq />
       </main>
       <Footer />

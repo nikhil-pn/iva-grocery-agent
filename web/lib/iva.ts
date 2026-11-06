@@ -45,19 +45,21 @@ export const LINKS = {
   zeroG: "https://0g.ai",
   zeroGCompute: "https://pc.0g.ai",
   comfy: "https://www.comfy.fun",
+  arkiv: "https://arkiv.network",
   ethglobal: "https://ethglobal.com/events/mumbai",
 };
 
-/**
- * comfy registration (in progress tonight). Paste the values here once
- * `comfy agent register --complete` prints them. Empty string = "coming soon".
- */
-export const COMFY = {
-  agentId: "",
-  tokenAddress: "",
-  tokenTicker: "$IVA",
-  /** Link to Iva's comfy page once registered (leave "" until then). */
-  agentUrl: "",
+/** Arkiv (Rabdi testnet): Iva's public, expiring deal feed. Writer = Iva's own wallet. */
+export const ARKIV = {
+  site: "https://arkiv.network",
+  network: "Rabdi testnet",
+  chainId: 7794095,
+  explorer: "https://rabdi.explorer.arkiv.network",
+  schema: "iva.deal.v1",
+  dealHours: 6,
+  /** The first real publish (2026-11-07, Mumbai): one hunt → 7 deals in one tx. */
+  proofTx: "0x89f91c6c19c3b055bf37c3f215c57a5492aa28a4d544b00e5bcc551737bd7c56",
+  proofEntity: "0xd7c8e9128990e1e45e66df6fcd5a269a3dab9f4865f66104ff62010217614d50",
 };
 
 export const txUrl = (hash: string) => `${CHAIN.explorer}/tx/${hash}`;
@@ -65,13 +67,14 @@ export const addrUrl = (addr: string) => `${CHAIN.explorer}/address/${addr}`;
 export const short = (s: string, head = 6, tail = 4) =>
   s.length > head + tail + 1 ? `${s.slice(0, head)}…${s.slice(-tail)}` : s;
 
-/** The live run on 0G mainnet, 2026-11-06 (from the README proof table). */
+/** The live run on 0G mainnet (2026-11-06) and the first Arkiv publish (from the README proof). */
 export const PROOF: {
   icon: string;
   step: string;
   tx?: string;
   requests?: string[];
   note?: string;
+  links?: { label: string; href: string }[];
 }[] = [
   {
     icon: "💰",
@@ -107,6 +110,14 @@ export const PROOF: {
     icon: "🛑",
     step: "Spend cap: API key “Iva” has credit_limit 0.5, reset_period daily (read back from GET /v1/api-keys)",
     note: "Enforced by 0G",
+  },
+  {
+    icon: "📡",
+    step: "Arkiv (Rabdi testnet): one Mumbai hunt publishes 7 deals in one tx, each expiring 6 h later on its own",
+    links: [
+      { label: `tx ${short(ARKIV.proofTx, 12, 8)}`, href: `${ARKIV.explorer}/tx/${ARKIV.proofTx}` },
+      { label: `entity ${short(ARKIV.proofEntity, 12, 8)}`, href: `${ARKIV.explorer}/entity/${ARKIV.proofEntity}` },
+    ],
   },
 ];
 
