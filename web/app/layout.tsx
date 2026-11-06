@@ -1,14 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter_Tight, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { SITE_URL } from "@/lib/iva";
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
+const sans = Inter_Tight({ variable: "--font-sans-body", subsets: ["latin"] });
+const serif = Instrument_Serif({ variable: "--font-serif-display", subsets: ["latin"], weight: "400", style: ["italic", "normal"] });
+const mono = JetBrains_Mono({ variable: "--font-mono-code", subsets: ["latin"] });
 
-const title = "Iva: the grocery agent that pays for her own brain";
+const title = "Iva: your basket, sorted";
 const description =
-  "Send Iva your shopping list on Telegram. She finds the cheapest basket across Blinkit, Swiggy Instamart and Zepto, and pays for her own AI on 0G Compute out of the fees she earns.";
+  "Send Iva your grocery list. She finds the cheapest basket across Blinkit, Instamart and Zepto, publishes the deals to Arkiv, and pays for her own brain on 0G Compute.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a0b0e",
+  themeColor: "#1d2421",
   colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
@@ -28,7 +29,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    <html lang="en" className={`${sans.variable} ${serif.variable} ${mono.variable} antialiased`}>
       <body className="min-h-dvh font-sans">{children}</body>
     </html>
   );

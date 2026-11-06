@@ -84,7 +84,7 @@ export default async function LiveStats() {
         {s.activity == null ? (
           <p className="px-4 py-4 text-sm text-muted">
             The 0G explorer API didn&apos;t answer just now. The full history is on{" "}
-            <a className="text-sky-300 underline" href={addrUrl(IVA_WALLET)} target="_blank" rel="noopener noreferrer">
+            <a className="text-lime underline" href={addrUrl(IVA_WALLET)} target="_blank" rel="noopener noreferrer">
               chainscan
             </a>
             .
@@ -96,7 +96,7 @@ export default async function LiveStats() {
             {recent.map((a) => (
               <li key={a.hash} className="flex items-center gap-3 px-4 py-3">
                 <span
-                  className={`grid size-8 shrink-0 place-items-center rounded-full text-sm ${a.kind === "payment" ? "bg-emerald-400/15" : "bg-amber-400/15"}`}
+                  className={`grid size-8 shrink-0 place-items-center rounded-full text-sm ${a.kind === "payment" ? "bg-lime/15" : "bg-mustard/15"}`}
                   aria-hidden
                 >
                   {a.kind === "payment" ? "💰" : "⚡"}
@@ -109,14 +109,14 @@ export default async function LiveStats() {
                     href={txUrl(a.hash)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-mono text-xs text-sky-300 underline-offset-2 hover:underline"
+                    className="font-mono text-xs text-lime underline-offset-2 hover:underline"
                   >
                     {short(a.hash, 10, 6)}
                   </a>
                 </div>
                 <div className="text-right">
                   <p
-                    className={`text-sm font-semibold tabular-nums ${a.kind === "payment" ? "text-emerald-300" : "text-amber-200"}`}
+                    className={`text-sm font-semibold tabular-nums ${a.kind === "payment" ? "text-lime" : "text-mustard"}`}
                   >
                     {a.kind === "payment" ? "+" : "→ "}
                     {fmt(a.amount0G, 4)} 0G

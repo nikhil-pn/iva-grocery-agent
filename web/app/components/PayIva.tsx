@@ -161,7 +161,7 @@ export default function PayIva({ compact = false }: { compact?: boolean }) {
           </p>
         )}
         {isOkx && (
-          <p className="mb-4 rounded-lg border border-amber-400/40 bg-amber-400/10 p-3 text-sm text-amber-200">
+          <p className="mb-4 rounded-lg border border-mustard/40 bg-mustard/10 p-3 text-sm text-mustard">
             <b>OKX Wallet detected.</b> Its in-app browser can return a tx hash that never reaches 0G. Use OKX&apos;s
             normal <b>Send</b> instead (see “Or send it yourself”).
           </p>
@@ -176,7 +176,7 @@ export default function PayIva({ compact = false }: { compact?: boolean }) {
             autoComplete="off"
             value={amount}
             onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ""))}
-            className="w-full rounded-xl border border-line bg-bg px-3 py-3 text-2xl font-semibold tabular-nums outline-none focus:border-amber-400/70"
+            className="w-full rounded-2xl border border-line bg-bg px-3 py-3 text-2xl font-semibold tabular-nums outline-none focus:border-lime/70"
           />
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -185,7 +185,7 @@ export default function PayIva({ compact = false }: { compact?: boolean }) {
               key={v}
               type="button"
               onClick={() => setAmount(v)}
-              className={`tap rounded-full border px-3 py-1 text-sm ${amount === v ? "border-amber-400 bg-amber-400/15 text-amber-200" : "border-line text-muted"}`}
+              className={`tap rounded-full border px-3 py-1 text-sm ${amount === v ? "border-lime bg-lime/15 text-lime" : "border-line text-muted"}`}
             >
               {v} 0G · {Math.round(Number(v) / HUNT_FEE_0G)} hunt{v === "0.2" ? "" : "s"}
             </button>
@@ -200,7 +200,7 @@ export default function PayIva({ compact = false }: { compact?: boolean }) {
           <>
             <a
               href={deepLink}
-              className="tap mt-4 block w-full rounded-xl bg-amber-400 px-4 py-3.5 text-center text-base font-bold text-black"
+              className="tap mt-4 block w-full rounded-2xl bg-lime px-4 py-3.5 text-center text-base font-bold text-ink"
             >
               Open in MetaMask app
             </a>
@@ -213,7 +213,7 @@ export default function PayIva({ compact = false }: { compact?: boolean }) {
             type="button"
             onClick={pay}
             disabled={busy}
-            className="tap mt-4 w-full rounded-xl bg-amber-400 px-4 py-3.5 text-base font-bold text-black transition-opacity disabled:opacity-50"
+            className="tap mt-4 w-full rounded-2xl bg-lime px-4 py-3.5 text-base font-bold text-ink transition-opacity disabled:opacity-50"
           >
             {busy ? "Working…" : "Connect wallet & pay"}
           </button>
@@ -222,7 +222,7 @@ export default function PayIva({ compact = false }: { compact?: boolean }) {
         {msg && (
           <p
             role="status"
-            className={`mt-3 text-sm ${phase === "failed" || phase === "stuck" ? "text-red-300" : phase === "confirmed" ? "text-emerald-300" : "text-muted"}`}
+            className={`mt-3 text-sm ${phase === "failed" || phase === "stuck" ? "text-red-300" : phase === "confirmed" ? "text-lime" : "text-muted"}`}
           >
             {phase === "confirmed" ? "✅ " : phase === "failed" ? "❌ " : ""}
             {msg}
@@ -230,16 +230,16 @@ export default function PayIva({ compact = false }: { compact?: boolean }) {
         )}
 
         {hash && (
-          <div className="mt-4 rounded-xl border border-line bg-bg p-4">
+          <div className="mt-4 rounded-2xl border border-line bg-bg p-4">
             {phase === "confirmed" ? (
-              <p className="font-semibold text-emerald-300">Paid. One more tap:</p>
+              <p className="font-semibold text-lime">Paid. One more tap:</p>
             ) : (
               <p className="text-sm text-muted">Your transaction:</p>
             )}
             {(phase === "confirmed" || phase === "stuck") && (
               <a
                 href={returnUrl}
-                className="tap mt-3 block w-full rounded-xl bg-[#2aabee] px-4 py-3.5 text-center font-bold text-white"
+                className="tap mt-3 block w-full rounded-2xl bg-[#2aabee] px-4 py-3.5 text-center font-bold text-white"
               >
                 Return to Iva on Telegram
               </a>
@@ -248,7 +248,7 @@ export default function PayIva({ compact = false }: { compact?: boolean }) {
               href={txUrl(hash)}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-3 block break-all font-mono text-xs text-sky-300 underline-offset-2 hover:underline"
+              className="mt-3 block break-all font-mono text-xs text-lime underline-offset-2 hover:underline"
             >
               {hash}
             </a>
@@ -257,7 +257,7 @@ export default function PayIva({ compact = false }: { compact?: boolean }) {
       </div>
 
       <div className="card p-5">
-        <p className="text-xs font-semibold uppercase tracking-wider text-amber-300">Works from any wallet</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-lime">Works from any wallet</p>
         <h3 className="mt-1 text-lg font-bold">Or send it yourself</h3>
         <ol className="mt-3 space-y-3 text-sm text-muted">
           <li>
@@ -278,7 +278,7 @@ export default function PayIva({ compact = false }: { compact?: boolean }) {
           href={`https://t.me/${BOT_USERNAME}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="tap mt-4 block w-full rounded-xl border border-line px-4 py-3 text-center font-semibold"
+          className="tap mt-4 block w-full rounded-2xl border border-line px-4 py-3 text-center font-semibold"
         >
           Open @{BOT_USERNAME}
         </a>

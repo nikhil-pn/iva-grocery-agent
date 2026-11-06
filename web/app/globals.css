@@ -1,15 +1,24 @@
 @import "tailwindcss";
 
+/* Design tokens, sampled from the hero photo: asphalt floor, lime type, basket green, olive juice, mustard shoes. */
 @theme {
-  --color-bg: #0a0b0e;
-  --color-raised: #12141a;
-  --color-card: #14171e;
-  --color-line: #252a35;
-  --color-fg: #ecedf0;
-  --color-muted: #9aa1ad;
+  --color-bg: #1d2421;
+  --color-raised: #252d2a;
+  --color-card: #232b28;
+  --color-line: #36403c;
+  --color-fg: #f2f0e8;
+  --color-muted: #a3aca7;
   --color-tg: #2aabee;
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --color-lime: #7ed854;
+  --color-lime-deep: #5fb83a;
+  --color-basket: #0f3b2e;
+  --color-olive: #9a9a4a;
+  --color-mustard: #e3a63b;
+  --color-paper: #f4f1e7;
+  --color-ink: #141816;
+  --font-sans: var(--font-sans-body), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-serif: var(--font-serif-display), ui-serif, Georgia, serif;
+  --font-mono: var(--font-mono-code), ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 :root {
@@ -26,7 +35,6 @@ body {
   color: var(--color-fg);
 }
 
-/* Section anchors land below the sticky header. */
 section[id] {
   scroll-margin-top: 4.5rem;
 }
@@ -34,17 +42,74 @@ section[id] {
 .card {
   background: var(--color-card);
   border: 1px solid var(--color-line);
-  border-radius: 1rem;
+  border-radius: 1.25rem;
 }
 
-/* Phone polish: no grey tap flash, no long-press text selection on buttons, no 300 ms delay. */
+/* "your" in the headline: italic serif, the poster's pairing. */
+.serif-i {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.display {
+  letter-spacing: -0.045em;
+  line-height: 0.92;
+  font-weight: 500;
+}
+
+/* Die-cut 2D stickers. */
+.sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 3px solid #fff;
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.08),
+    0 10px 24px -8px rgba(0, 0, 0, 0.55);
+  transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@media (hover: hover) {
+  .sticker:hover {
+    transform: rotate(0deg) scale(1.06) !important;
+  }
+}
+
+/* Paper receipt with a torn bottom edge. */
+.receipt {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  --tear: 10px;
+  mask:
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / calc(2 * var(--tear)) 100%;
+  padding-bottom: calc(var(--tear) + 1.25rem);
+}
+
+/* Shelf-edge price tag. */
+.tag {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  border-radius: 0.9rem;
+  position: relative;
+}
+.tag::before {
+  content: "";
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: var(--color-bg);
+}
+
 .tap {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   user-select: none;
 }
 
-/* iOS zooms into inputs under 16px; ours are larger, keep it that way. */
 input {
   font-size: max(16px, 1em);
 }
@@ -59,8 +124,73 @@ details[open] .chev {
   transform: rotate(45deg);
 }
 
+/* ---------- The loop animation (one 12 s cycle, 6 stations) ---------- */
+.loop-step {
+  animation: step-on 12s infinite;
+  opacity: 0.4;
+}
+.loop-node {
+  animation: node-on 12s infinite;
+}
+@keyframes step-on {
+  0%,
+  16.6% {
+    opacity: 1;
+  }
+  18%,
+  100% {
+    opacity: 0.4;
+  }
+}
+@keyframes node-on {
+  0%,
+  16.6% {
+    fill: var(--color-lime);
+    transform: scale(1.12);
+  }
+  18%,
+  100% {
+    fill: var(--color-raised);
+    transform: scale(1);
+  }
+}
+.loop-node {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.loop-dash {
+  stroke-dasharray: 4 10;
+  animation: dash 1.2s linear infinite;
+}
+@keyframes dash {
+  to {
+    stroke-dashoffset: -14;
+  }
+}
+
+.float-y {
+  animation: float-y 6s ease-in-out infinite;
+}
+@keyframes float-y {
+  50% {
+    transform: translateY(-6px) rotate(var(--r, 0deg));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  .loop-step,
+  .loop-node,
+  .loop-dash,
+  .float-y {
+    animation: none !important;
+  }
+  .loop-step {
+    opacity: 1;
+  }
+  .loop-coin {
+    display: none;
   }
 }
