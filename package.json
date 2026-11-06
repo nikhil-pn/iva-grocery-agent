@@ -1,0 +1,20 @@
+{
+  "name": "iva-grocery-agent",
+  "version": "0.1.0",
+  "description": "Iva: a grocery deal-hunting agent that pays for its own brain on 0G Compute.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node src/bot.mjs",
+    "brain": "node scripts/brain-status.mjs",
+    "hunt": "node scripts/hunt-cli.mjs",
+    "treasury": "node scripts/treasury-once.mjs"
+  },
+  "dependencies": {
+    "playwright-core": "^1.65.0",
+    "viem": "^2.57.16"
+  }
+}
