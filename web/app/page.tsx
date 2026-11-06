@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import LiveStats, { LiveStatsSkeleton } from "./components/LiveStats";
 import PayIva from "./components/PayIva";
-import CopyButton from "./components/CopyButton";
 import receipts from "@/public/receipts.json";
 import {
   BOT_URL,
@@ -197,7 +196,7 @@ function TelegramMock() {
           </p>
           {h.calls.map((c) => (
             <p key={c.requestId} className="font-mono text-[11px] text-sky-300/90 break-all">
-              {c.requestId} <span className="text-muted">{c.model}</span>
+              {c.requestId} <span className="whitespace-nowrap text-muted">{c.model}</span>
             </p>
           ))}
         </div>
@@ -636,11 +635,6 @@ export default function Home() {
           lead="Pay here with an injected wallet (MetaMask and friends), then tap back to Telegram. Iva verifies it onchain and credits your hunts."
         >
           <PayIva />
-          <div className="mt-3 flex items-center gap-2 text-xs text-muted">
-            <span>Iva&apos;s wallet:</span>
-            <code className="min-w-0 truncate font-mono">{IVA_WALLET}</code>
-            <CopyButton text={IVA_WALLET} />
-          </div>
         </Section>
         <Proof />
         <Comfy />
