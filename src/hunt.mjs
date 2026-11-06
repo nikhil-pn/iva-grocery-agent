@@ -45,7 +45,7 @@ export async function understand(input, brain, receipts) {
   ];
   else if (input.kind === 'voice') content = [
     { type: 'text', text: 'This voice note is a shopping list. Listen and convert it.' },
-    { type: 'input_audio', input_audio: { data: input.b64, format: input.format || 'wav' } },
+    { type: 'input_audio', input_audio: { data: `data:audio/${input.format || 'wav'};base64,${input.b64}`, format: input.format || 'wav' } },
   ];
   const model = input.kind === 'photo' ? m.vision : input.kind === 'voice' ? m.audio : m.text;
   const r = await chat({
