@@ -143,6 +143,10 @@ async function onUpdate(up) {
   }
   if (!text) return;
 
+  // A pasted transaction hash on its own (with or without /paid) is a payment claim.
+  const hashOnly = text.match(/^(?:\/paid\s*)?((?:0x)?[0-9a-fA-F]{64})$/);
+  if (hashOnly) return claimPayment(chatId, hashOnly[1]);
+
   const [cmd, ...rest] = text.split(/\s+/);
   const arg = rest.join(' ');
   switch (cmd.toLowerCase().replace(/@.*$/, '')) {
