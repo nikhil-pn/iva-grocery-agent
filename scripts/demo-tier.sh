@@ -14,7 +14,7 @@ case "${1:-}" in
     C=$($N -e "import('./src/zg/account.mjs').then(async a=>console.log((await a.funds()).spendable.toFixed(4)))")
     setv IVA_RICH_MIN "$($N -e "console.log(($C + 0.05).toFixed(3))")"; setv IVA_DAILY_CAP ;;
   survival)
-    S=$($N -e "import('./src/brain.mjs').then(async b=>console.log((await b.brainState({fresh:true})).spentToday.toFixed(4)))")
+    S=$($N -e "import('./src/brain.mjs').then(async b=>console.log(((await b.brainState({fresh:true})).spentToday * 0.99).toFixed(6)))")
     setv IVA_DAILY_CAP "$S"; setv IVA_RICH_MIN ;;
   reset) setv IVA_RICH_MIN; setv IVA_DAILY_CAP ;;
   *) echo "usage: $0 lean|survival|reset"; exit 1 ;;
