@@ -2,7 +2,7 @@
 
 The feed is public. Reading it needs:
 - the schema name `iva.deal.v1`;
-- the writer address `0x489C565e0f7770A3760cE742b89ee2A1Fa78cFC0`;
+- the writer address `0xbbd2beC1DFd26272c171d174BeEb4eE0488b918d`;
 - an Arkiv RPC.
 
 There is no API key from us, no account and no Iva server in between. Every hunt any user runs

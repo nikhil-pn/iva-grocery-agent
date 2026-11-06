@@ -116,14 +116,18 @@ attribute: no API key from us, and no server or database to run.
 - **In the bot:** `/deals` (or `/deals eggs`) shows the cheapest live deals near you, read from Arkiv,
   with "expires in Xh Ym" and a link.
 - **Network:** Arkiv Rabdi testnet (chain `7794095`). Schema `iva.deal.v1`.
-- **Writer wallet** (owner of every deal): [`0x489C565e0f7770A3760cE742b89ee2A1Fa78cFC0`](https://rabdi.explorer.arkiv.network/address/0x489C565e0f7770A3760cE742b89ee2A1Fa78cFC0)
+- **Writer wallet** (owner of every deal): [`0xbbd2beC1DFd26272c171d174BeEb4eE0488b918d`](https://rabdi.explorer.arkiv.network/address/0xbbd2beC1DFd26272c171d174BeEb4eE0488b918d)
 - **One runnable query** (no keys needed):
   ```bash
   npm install && node scripts/arkiv-query.mjs eggs     # live egg deals in Mumbai; --city pune, --json
   ```
   It sends this query, filtered to Iva's writer:
   `arkiv.schema = str('iva.deal.v1') AND city = str('mumbai') AND item = str('egg') AND $owner = addr(0x489C…cFC0) ORDER BY unitPriceRs:dec ASC`
-- **A real entity:** _TODO: add after the first publish. The writer needs testnet tGLM first, from a faucet behind a CAPTCHA. Every publish logs its entity keys and tx hashes to `data/events.jsonl` as an `arkiv` event._
+- **Real publish (2026-11-07, Rabdi testnet):** one hunt in Mumbai ("12 eggs, 1 kg onion, 1 litre milk") published 7 deals in
+  tx [`0x89f91c6c…7bd7c56`](https://rabdi.explorer.arkiv.network/tx/0x89f91c6c19c3b055bf37c3f215c57a5492aa28a4d544b00e5bcc551737bd7c56),
+  e.g. entity [`0xd7c8e912…614d50`](https://rabdi.explorer.arkiv.network/entity/0xd7c8e9128990e1e45e66df6fcd5a269a3dab9f4865f66104ff62010217614d50).
+  Each one expires 6 h later on its own. `/deals` and `scripts/arkiv-query.mjs` read them back.
+- **One wallet for everything:** the Arkiv writer is Iva's own wallet `0xbbd2…918d`, the same one that earns 0G and signs her compute deposits.
 - Code: [`src/arkiv.mjs`](src/arkiv.mjs). Docs: [schema](arkiv/schema.md) · [why Arkiv](arkiv/why-arkiv.md) ·
   [how we use it](arkiv/how-you-use-arkiv.md) · [friction log](arkiv/friction.md) · [reach](arkiv/reach.md)
 

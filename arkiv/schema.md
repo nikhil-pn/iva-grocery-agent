@@ -8,7 +8,7 @@ One entity is **one deal**: the product Iva matched for one item on a shopping l
 | Network | Arkiv **Rabdi testnet**, chain id `7794095`, RPC `https://rpc.rabdi.db-chain.testnet.arkiv.network`, gas token tGLM |
 | Explorer | <https://rabdi.explorer.arkiv.network> (`/entity/<key>`, `/tx/<hash>`, `/address/<addr>`) |
 | Schema name | `iva.deal.v1`. A named SDK schema, so every entity carries the indexed tag `arkiv.schema = "iva.deal.v1"` |
-| Owner | Iva's Arkiv writer wallet [`0x489C565e0f7770A3760cE742b89ee2A1Fa78cFC0`](https://rabdi.explorer.arkiv.network/address/0x489C565e0f7770A3760cE742b89ee2A1Fa78cFC0). It is a separate key from her 0G wallet and is used only for this feed. |
+| Owner | Iva's Arkiv writer wallet [`0xbbd2beC1DFd26272c171d174BeEb4eE0488b918d`](https://rabdi.explorer.arkiv.network/address/0xbbd2beC1DFd26272c171d174BeEb4eE0488b918d). It is the same wallet Iva uses on 0G (her payments and self-deposits), so one identity owns her money, her brain account and her deal feed. |
 | Expiry | **6 hours** after the hunt (`ExpirationTime.fromHours(6)` = 10,800 blocks at 2 s). Arkiv deletes the entity then. Override with `IVA_DEAL_HOURS`. |
 | Written by | `publishDeals()` in [`src/arkiv.mjs`](../src/arkiv.mjs), up to 12 creates per `executeBatch` transaction |
 | Defined in | `Deals = defineSchema('iva.deal.v1', {...})` in [`src/arkiv.mjs`](../src/arkiv.mjs) |
@@ -42,10 +42,10 @@ These are the query strings the SDK sends (`liveDeals()` returns them as `querie
 
 ```
 # /deals: newest deals in the user's metro
-arkiv.schema = str('iva.deal.v1') AND city = str('mumbai') AND $owner = addr(0x489C565e0f7770A3760cE742b89ee2A1Fa78cFC0) ORDER BY huntAt:u64 DESC
+arkiv.schema = str('iva.deal.v1') AND city = str('mumbai') AND $owner = addr(0xbbd2beC1DFd26272c171d174BeEb4eE0488b918d) ORDER BY huntAt:u64 DESC
 
 # /deals eggs: that item, cheapest per unit first
-arkiv.schema = str('iva.deal.v1') AND city = str('mumbai') AND item = str('egg') AND $owner = addr(0x489C565e0f7770A3760cE742b89ee2A1Fa78cFC0) ORDER BY unitPriceRs:dec ASC
+arkiv.schema = str('iva.deal.v1') AND city = str('mumbai') AND item = str('egg') AND $owner = addr(0xbbd2beC1DFd26272c171d174BeEb4eE0488b918d) ORDER BY unitPriceRs:dec ASC
 ```
 
 Expired entities are gone from Arkiv, so every row returned is live. "Expires in" is

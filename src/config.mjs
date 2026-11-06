@@ -77,7 +77,7 @@ export const cfg = {
   arkiv: {
     enabled: env('IVA_ARKIV', '1') !== '0',
     privateKey: env('ARKIV_PRIVATE_KEY'),
-    address: env('ARKIV_ADDRESS', '0x489C565e0f7770A3760cE742b89ee2A1Fa78cFC0'),
+    address: env('ARKIV_ADDRESS', '0xbbd2beC1DFd26272c171d174BeEb4eE0488b918d'),
     accessKey: env('ARKIV_ACCESS_KEY', ''), // optional; not a secret, lifts the public RPC rate limit
     dealHours: num('IVA_DEAL_HOURS', 6),
     explorer: 'https://rabdi.explorer.arkiv.network',
