@@ -32,6 +32,8 @@ export const cfg = {
   ivaAddress: env('IVA_ADDRESS'),
   ivaPrivateKey: env('IVA_PRIVATE_KEY'),
   creatorAddress: env('CREATOR_ADDRESS', ''),
+  // The 0G Router account Iva's API key bills. Defaults to Iva's own wallet address.
+  computeAccount: env('ZG_ACCOUNT_ADDRESS', ''),
 
   // 0G mainnet
   chainId: 16661,

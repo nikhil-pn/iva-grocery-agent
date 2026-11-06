@@ -170,8 +170,19 @@ async function onUpdate(up) {
   }
 }
 
+function singleInstance() {
+  // Telegram allows one poller per bot; refuse to start a second copy.
+  const pidFile = join(cfg.dataDir, 'bot.pid');
+  try {
+    const old = Number(readFileSync(pidFile, 'utf8'));
+    if (old && old !== process.pid) { process.kill(old, 0); throw new Error(`already running as pid ${old}`); }
+  } catch (e) { if (!/ENOENT|ESRCH|NaN/.test(e.code || e.message)) throw e; }
+  writeFileSync(pidFile, String(process.pid));
+}
+
 async function main() {
   if (!cfg.telegramToken) throw new Error('TELEGRAM_BOT_TOKEN missing');
+  singleInstance();
   const me = await tg('getMe');
   cfg.botUsername ||= me.username;
   await tg('setMyCommands', { commands: [

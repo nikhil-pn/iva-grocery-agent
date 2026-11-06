@@ -20,12 +20,14 @@ export const pub = createPublicClient({ chain: zg, transport: http(cfg.rpcUrl) }
 const account = cfg.ivaPrivateKey ? privateKeyToAccount(cfg.ivaPrivateKey) : null;
 const wallet = account ? createWalletClient({ account, chain: zg, transport: http(cfg.rpcUrl) }) : null;
 export const ivaAddress = account?.address || cfg.ivaAddress;
+// the 0G compute account Iva funds (her own address unless configured otherwise)
+export const computeAccount = cfg.computeAccount || ivaAddress;
 
 export async function walletBalance0G() {
   return Number(formatEther(await pub.getBalance({ address: ivaAddress })));
 }
 
-export async function vaultBalance0G(addr = ivaAddress) {
+export async function vaultBalance0G(addr = computeAccount) {
   const b = await pub.readContract({ address: cfg.paymentVault, abi: VAULT_ABI, functionName: 'balanceOf', args: [addr] });
   return Number(formatEther(b));
 }
@@ -35,7 +37,7 @@ export async function depositToCompute(amount0G) {
   if (!wallet) throw new Error('no Iva private key');
   const hash = await wallet.writeContract({
     address: cfg.paymentVault, abi: VAULT_ABI, functionName: 'depositFor',
-    args: [ivaAddress], value: parseEther(amount0G.toFixed(6)),
+    args: [computeAccount], value: parseEther(amount0G.toFixed(6)),
   });
   const r = await pub.waitForTransactionReceipt({ hash, timeout: 90_000 });
   if (r.status !== 'success') throw new Error(`deposit reverted ${hash}`);
@@ -67,7 +69,7 @@ export async function verifyPayment(hash) {
   if (to === ivaAddress.toLowerCase()) return { ok: true, from: tx.from, amount0G, kind: 'wallet' };
   if (to === cfg.paymentVault.toLowerCase() && tx.input?.startsWith('0xaa67c919')) {
     const target = '0x' + tx.input.slice(34, 74);
-    if (target.toLowerCase() === ivaAddress.toLowerCase()) return { ok: true, from: tx.from, amount0G, kind: 'compute' };
+    if (target.toLowerCase() === computeAccount.toLowerCase()) return { ok: true, from: tx.from, amount0G, kind: 'compute' };
   }
   return { ok: false, reason: 'that payment was not sent to Iva' };
 }
