@@ -45,7 +45,7 @@ export function brainMessage(s, t, evs, ivaAddress) {
   L.push(`\n💳 Wallet: <b>${og(s.wallet)}</b>  <a href="${addrUrl(ivaAddress)}">${ivaAddress.slice(0, 8)}…</a>`);
   L.push(`⚡ 0G compute: <b>${og(s.compute)}</b> spendable${s.vault != null ? ` (vault ${og(s.vault)})` : ''}`);
   L.push(`📉 Spent today: ${og(s.spentToday)} of ${s.cap} 0G cap`);
-  L.push(`\n📒 Lifetime: earned ${og(t.earned, 3)} · self-deposited ${og(t.deposited, 3)} · creator dividends ${og(t.dividends, 3)} · ${t.inferences} 0G calls (${og(t.spent, 4)}) · ${t.hunts} hunts`);
+  L.push(`\n📒 Lifetime: earned ${og(t.earned, 3)}${t.refunded ? ` (refunded ${og(t.refunded, 2)})` : ''} · self-deposited ${og(t.deposited, 3)} · creator dividends ${og(t.dividends, 3)} · ${t.inferences} 0G calls (${og(t.spent, 4)}) · ${t.hunts} hunts`);
   const pay = evs.filter((e) => ['income', 'deposit', 'dividend'].includes(e.type)).slice(0, 4);
   if (pay.length) {
     L.push('\n🔗 <b>Recent money moves</b>');

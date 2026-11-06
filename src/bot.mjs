@@ -73,8 +73,13 @@ async function claimPayment(chatId, hash) {
   await edit(chatId, m.message_id, `✅ Got <b>${fmt0G(v.amount0G)}</b> — <a href="${txUrl(hash)}">tx</a>
 +${hunts} hunts (you have ${user(chatId).credits}).
 ${v.kind === 'wallet' ? '⚡ I\'ll now move it into my 0G compute account myself…' : '⚡ It went straight into my 0G compute account.'}`);
-  const ev = await treasuryTick('payment');
-  if (ev?.type === 'deposit') await send(chatId, `⚡ Topped up my own brain: deposited <b>${fmt0G(ev.amount0G)}</b> into 0G compute — <a href="${txUrl(ev.tx)}">tx</a>`);
+  let ev = await treasuryTick('payment');
+  // the treasury loop may have deposited it already (it checks every 30 s)
+  if (ev?.type !== 'deposit') {
+    const last = recentEvents('deposit', 1)[0];
+    if (last && Date.now() - Date.parse(last.at) < 15 * 60_000) ev = last;
+  }
+  if (ev?.type === 'deposit') await send(chatId, `⚡ Topped up my own brain: deposited <b>${fmt0G(ev.amount0G)}</b> into my 0G compute account — <a href="${txUrl(ev.tx)}">tx</a>`);
 }
 
 let busy = 0;
