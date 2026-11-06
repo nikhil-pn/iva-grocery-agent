@@ -16,6 +16,9 @@ export const PAYMENT_LAYER = "0xA3b15Bd2aD18BFB6b5f92D8AA9F444Dd59d1cE32";
 export const DEPOSIT_FOR_SELECTOR = "0xaa67c919"; // depositFor(address)
 export const BALANCE_OF_SELECTOR = "0x70a08231"; // balanceOf(address)
 
+/** Public site URL (used for link previews). */
+export const SITE_URL = "https://iva-grocery-agent.vercel.app";
+
 export const BOT_USERNAME = "IvaGroceryAgentbot";
 export const BOT_URL = `https://t.me/${BOT_USERNAME}`;
 export const REPO_URL = "https://github.com/nikhil-pn/iva-grocery-agent";

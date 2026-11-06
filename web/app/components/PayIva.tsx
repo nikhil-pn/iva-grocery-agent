@@ -196,21 +196,27 @@ export default function PayIva({ compact = false }: { compact?: boolean }) {
           (chain {CHAIN.id})
         </p>
 
-        <button
-          type="button"
-          onClick={pay}
-          disabled={busy}
-          className="tap mt-4 w-full rounded-xl bg-amber-400 px-4 py-3.5 text-base font-bold text-black transition-opacity disabled:opacity-50"
-        >
-          {busy ? "Working…" : hasWallet === false ? "No wallet in this browser" : "Connect wallet & pay"}
-        </button>
-        {hasWallet === false && (
-          <a
-            href={deepLink}
-            className="tap mt-2 block w-full rounded-xl border border-line px-4 py-3 text-center font-semibold"
+        {hasWallet === false ? (
+          <>
+            <a
+              href={deepLink}
+              className="tap mt-4 block w-full rounded-xl bg-amber-400 px-4 py-3.5 text-center text-base font-bold text-black"
+            >
+              Open in MetaMask app
+            </a>
+            <p className="mt-2 text-xs text-muted">
+              No wallet in this browser. Open this page in a wallet&apos;s browser, or send 0G yourself (below).
+            </p>
+          </>
+        ) : (
+          <button
+            type="button"
+            onClick={pay}
+            disabled={busy}
+            className="tap mt-4 w-full rounded-xl bg-amber-400 px-4 py-3.5 text-base font-bold text-black transition-opacity disabled:opacity-50"
           >
-            Open in MetaMask app
-          </a>
+            {busy ? "Working…" : "Connect wallet & pay"}
+          </button>
         )}
 
         {msg && (
