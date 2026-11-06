@@ -22,9 +22,20 @@
 |---|---|
 | Inference on 0G Private Computer in the main flow, with request IDs | ✅ every hunt (router-api.0g.ai) |
 | A working app a judge can try | ✅ t.me/IvaGroceryAgentbot (first hunt free) |
-| A clear reason to come back tomorrow | ⚠️ groceries are daily, but there is no hook yet (price-drop alerts / saved list) |
+| A clear reason to come back tomorrow | ✅ `/watch`: Iva re-checks your saved list every morning (08:30 IST) and tells you if it got cheaper |
 | One sentence on what breaks if 0G is removed | ✅ README |
-| iAI bonus: user signs in with a 0G account and spends their own credits | ❌ needs a web app on localhost:3000 with 0G's Privy app ID |
+| iAI bonus: user signs in with a 0G account and spends their own credits | ❌ not attempted (optional bonus) |
+
+## 🗂 Arkiv: Build on Arkiv (from scratch)
+
+| Requirement | Status |
+|---|---|
+| App data lives in Arkiv entities (owner, attribute filters, expiry) | ✅ schema `iva.deal.v1`, owner = Iva's wallet, expires 6 h after a hunt |
+| A user-visible feature reads from Arkiv | ✅ `/deals` in the bot + "Live deals" on the website |
+| README with writer wallet + one runnable query | ✅ README "Arkiv: live deal feed" (`node scripts/arkiv-query.mjs eggs`) |
+| `/arkiv/schema.md`, `friction.md`, `reach.md`, `why-arkiv.md`, `how-you-use-arkiv.md` | ✅ |
+| Open-source licence + AI-usage statement | ✅ MIT, `AI_USAGE.md` |
+| Real proof | ✅ tx `0x89f91c6c…` (7 deals, Rabdi testnet) |
 
 ## Submission
 
@@ -33,7 +44,7 @@
 | Name + short description | ✅ `docs/SUBMISSION.md` |
 | Public repo, README + setup | ✅ |
 | Demo video (< 3 min) + live demo link | ⏳ video last · live link ✅ |
-| Contract addresses | none of our own (0G Payment Layer `0xA3b1…cE32`) · + comfy agent ID / token if registered |
+| Contract addresses | none of our own (0G Payment Layer `0xA3b1…cE32`); Arkiv writer = Iva's wallet `0xbbd2…918d` |
 | Team names + Telegram + X | ⏳ |
 
 ## comfy: what registering Iva needs

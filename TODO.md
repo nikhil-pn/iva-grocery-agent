@@ -23,7 +23,10 @@ domain and headers, server-side helpers. It also gives Iva a real landing page.
 - [ ] Point the bot at the new pay URL (`PAY_PAGE_URL`), restart the service, then test one real payment end to end.
 - [ ] Keep `docs/` (GitHub Pages) as a fallback until the Vercel pay page is verified with a real payment.
 
+## Done tonight
+- ✅ Next.js site on Vercel (landing, live stats, pay page, proof, Arkiv live deals)
+- ✅ /watch daily re-check (the come-back-tomorrow reason)
+- ✅ Arkiv live deal feed (expiring entities + /deals)
+
 ## Later
 - comfy: register Iva and launch her token with the compute share on (a second income stream into the same compute account).
-- Extra tracks once the core is done: World (proof of human for free hunts / approval before spending), Arkiv (expiring deal listings).
-- Price-drop alerts (a daily reason to come back).

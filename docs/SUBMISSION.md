@@ -21,6 +21,9 @@ She reads her own balance before every job and picks the best brain she can affo
 
 The spend cap is a 0.5 0G daily `credit_limit` enforced by 0G on her API key.
 
+**Why people come back tomorrow:** `/watch` saves your list, and every morning Iva re-checks it and tells you today's cheapest basket
+and whether it got cheaper. Each daily check is 1 paid hunt, which keeps funding her brain.
+
 **What breaks if 0G is removed:** Iva can't understand your list or match products across apps,
 and she has no way to pay for her own thinking. She becomes a dumb keyword script.
 
@@ -28,9 +31,11 @@ and she has no way to pay for her own thinking. She becomes a dumb keyword scrip
 and costs); the 0G Payment Layer `depositFor`; playwright-core reading each shop's own search page; and the Telegram Bot API.
 All payments, deposits and inference request IDs are logged and listed in the README.
 
-**Tracks:** 0G Agents That Pay for Themselves · 0G Build with 0G Private Computer
+**Sponsors / tracks (2 partner picks):**
+- **0G**: Agents That Pay for Themselves · Build with 0G Private Computer
+- **Arkiv**: Build on Arkiv (from scratch). Every hunt publishes its winning deals as Arkiv entities that **expire after 6 h**; `/deals` and the website read them back. Docs in `arkiv/`.
 
-**Links:** repo https://github.com/nikhil-pn/iva-grocery-agent · bot https://t.me/IvaGroceryAgentbot
+**Links:** repo https://github.com/nikhil-pn/iva-grocery-agent · bot https://t.me/IvaGroceryAgentbot · site https://iva-grocery-agent.vercel.app
 
 **Contracts:** none deployed. Iva uses the 0G Payment Layer `0xA3b15Bd2aD18BFB6b5f92D8AA9F444Dd59d1cE32`.
 Agent wallet `0xbbd2beC1DFd26272c171d174BeEb4eE0488b918d`.
