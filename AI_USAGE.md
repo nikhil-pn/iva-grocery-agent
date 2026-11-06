@@ -11,9 +11,9 @@ ETHGlobal asks teams to say how AI tools were used. Here is ours.
   (`router-api.0g.ai`): reading lists, voice notes and photos; matching products across shops;
   and writing replies. No other AI provider is called at runtime.
 - **Arkiv integration:** Claude Code read the `@arkiv-network/sdk` README and source and wrote the
-  deal feed (`src/arkiv.mjs`, `scripts/arkiv-query.mjs`, `arkiv/*.md`). It then tested it against
-  the live Rabdi testnet with a real hunt. The team chose to publish expiring deals and the
-  `/deals` feature, and claimed the testnet faucet by hand.
+  deal feed (`src/arkiv.mjs`, `scripts/arkiv-query.mjs`, `arkiv/*.md`). It ran a real hunt to build
+  the entities and tested the reads against the live Rabdi testnet. The team chose to publish expiring deals and the
+  `/deals` feature, and funds the testnet writer by hand (the faucet has a CAPTCHA).
 
 ## Pre-existing work
 

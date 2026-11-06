@@ -123,7 +123,7 @@ attribute: no API key from us, and no server or database to run.
   ```
   It sends this query, filtered to Iva's writer:
   `arkiv.schema = str('iva.deal.v1') AND city = str('mumbai') AND item = str('egg') AND $owner = addr(0x489C…cFC0) ORDER BY unitPriceRs:dec ASC`
-- **A real entity:** ARKIV_PROOF_PENDING
+- **A real entity:** _TODO: add after the first publish. The writer needs testnet tGLM first, from a faucet behind a CAPTCHA. Every publish logs its entity keys and tx hashes to `data/events.jsonl` as an `arkiv` event._
 - Code: [`src/arkiv.mjs`](src/arkiv.mjs). Docs: [schema](arkiv/schema.md) · [why Arkiv](arkiv/why-arkiv.md) ·
   [how we use it](arkiv/how-you-use-arkiv.md) · [friction log](arkiv/friction.md) · [reach](arkiv/reach.md)
 
