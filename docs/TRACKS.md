@@ -71,7 +71,7 @@ each winning price (signed by her wallet, set to delete itself in 6 h). `/deals`
 **How Arkiv judges (25% each), and where we answer:**
 | Criterion | Their question | Our answer |
 |---|---|---|
-| Feedback · `friction.md` | What got in your way? | What actually broke while building, with steps to reproduce. |
+| Feedback · `friction.md` | What got in your way? | 9 real problems we hit, e.g. an agent can't fund its own writer, misleading error for an unfunded wallet, 128-byte string cap, expiry in blocks not hours. |
 | Reach · `reach.md` | Who is it for, and can they try it today? | Shoppers in Indian metros, other agents, maps. Yes, today: bot, website, script. |
 | Why Arkiv · `why-arkiv.md` | What would users lose with Postgres? What did you keep off Arkiv? | Self-expiring prices + an open feed with no server. Kept off: users, exact locations, payments, receipts, Zepto logins. |
 | How · `how-you-use-arkiv.md` | Does each feature change something users see? | A table: expiry → "expires in Xh"; owner → no fake prices; filters → `/deals eggs`; batch → no slower replies. |
