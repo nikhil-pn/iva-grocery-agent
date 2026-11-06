@@ -16,6 +16,7 @@ import { startTreasury, treasuryTick } from './treasury.mjs';
 import { closeAll } from './shops/browser.mjs';
 import { user, updateUser, txUsed, markTx, logEvent, recentEvents, totals, recordIncome } from './ledger.mjs';
 import { txUrl } from './config.mjs';
+import { watchCommand, rememberHunt, startWatchScheduler, WATCH_COMMANDS } from './watch.mjs'; // /watch daily alert
 
 const run = promisify(execFile);
 
@@ -43,6 +44,7 @@ Example: <i>12 eggs, 1 kg onion, amul butter 500g</i>
 
 💸 I pay for my own brain. Each hunt costs <b>${cfg.huntFee} 0G</b>, and that money tops up my 0G compute account. ${u.freeUsed < cfg.freeHunts ? `Your first ${cfg.freeHunts > 1 ? cfg.freeHunts + ' hunts are' : 'hunt is'} on me.` : ''}
 /brain — see my wallet, balance and 0G receipts
+/watch — I re-check your list every morning and tell you if it got cheaper
 /pay — buy hunts · /me — your credits`;
 
 async function payPrompt(chatId) {
@@ -101,6 +103,7 @@ async function doHunt(chatId, input) {
   try {
     const r = await hunt(input, loc, (msg) => edit(chatId, m.message_id, msg));
     await edit(chatId, m.message_id, huntMessage(r));
+    if (input.kind === 'text') rememberHunt(chatId, input.text, r, loc); // so a bare /watch can save this list
     updateUser(chatId, { hunts: (u.hunts || 0) + 1, savedRs: (u.savedRs || 0) + (r.basket.saving || 0) });
     logEvent('hunt', { chat: String(chatId), kind: input.kind, items: r.items.length, tier: r.brain.tier,
       calls: r.receipts.map((x) => x.requestId), cost0G: r.receipts.reduce((a, x) => a + x.cost0G, 0),
@@ -174,8 +177,10 @@ async function onUpdate(up) {
       const s = await brainState({ fresh: true });
       return send(chatId, brainMessage(s, totals(), recentEvents(null, 40), ivaAddress));
     }
+    case '/watch': case '/watches': case '/unwatch': case '/watchnow': // /watch daily alert (src/watch.mjs)
+      return watchCommand(chatId, cmd.toLowerCase().replace(/@.*$/, ''), text.slice(cmd.length).trim(), { send, edit });
     default:
-      if (cmd.startsWith('/')) return send(chatId, 'I know /start /pay /paid /me /city /brain — or just send your list.');
+      if (cmd.startsWith('/')) return send(chatId, 'I know /start /pay /paid /me /city /brain /watch — or just send your list.');
       return doHunt(chatId, { kind: 'text', text });
   }
 }
@@ -202,9 +207,11 @@ async function main() {
     { command: 'paid', description: 'Claim a payment: /paid <txhash>' },
     { command: 'me', description: 'Your credits and location' },
     { command: 'city', description: 'Set city: /city pune' },
+    ...WATCH_COMMANDS,
   ] });
   console.log(`Iva up as @${me.username} · wallet ${ivaAddress}`);
   startTreasury((ev) => console.log('[treasury]', ev.type, ev.amount0G, ev.tx));
+  startWatchScheduler({ send }); // /watch daily alert
   await poll(onUpdate);
 }
 
