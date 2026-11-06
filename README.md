@@ -122,7 +122,7 @@ attribute: no API key from us, and no server or database to run.
   npm install && node scripts/arkiv-query.mjs eggs     # live egg deals in Mumbai; --city pune, --json
   ```
   It sends this query, filtered to Iva's writer:
-  `arkiv.schema = str('iva.deal.v1') AND city = str('mumbai') AND item = str('egg') AND $owner = addr(0x489C…cFC0) ORDER BY unitPriceRs:dec ASC`
+  `arkiv.schema = str('iva.deal.v1') AND city = str('mumbai') AND item = str('egg') AND $owner = addr(0xbbd2…918d) ORDER BY unitPriceRs:dec ASC`
 - **Real publish (2026-11-07, Rabdi testnet):** one hunt in Mumbai ("12 eggs, 1 kg onion, 1 litre milk") published 7 deals in
   tx [`0x89f91c6c…7bd7c56`](https://rabdi.explorer.arkiv.network/tx/0x89f91c6c19c3b055bf37c3f215c57a5492aa28a4d544b00e5bcc551737bd7c56),
   e.g. entity [`0xd7c8e912…614d50`](https://rabdi.explorer.arkiv.network/entity/0xd7c8e9128990e1e45e66df6fcd5a269a3dab9f4865f66104ff62010217614d50).

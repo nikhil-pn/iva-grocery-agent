@@ -101,7 +101,7 @@ export function setWatch(chatId, list, loc, now = Date.now()) {
   if (list.length > MAX_CHARS) return { ok: false, error: `That list is too long — keep it under ${MAX_CHARS} characters.` };
   const at = new Date(now).toISOString();
   const w = {
-    list, lat: loc.lat, lng: loc.lng, createdAt: at, lastRunAt: null, lastTotal: null, lastBest: null, history: [],
+    list, lat: loc.lat, lng: loc.lng, cityName: loc.cityName || null, createdAt: at, lastRunAt: null, lastTotal: null, lastBest: null, history: [],
     // the first scheduled check is the next morning, never minutes after you save it
     triedDay: istDay(now), paused: false, pausedAt: null,
   };
@@ -259,7 +259,7 @@ function watchSummary(chatId) {
   const w = getWatch(chatId);
   if (!w) return 'You have no watch. Send <code>/watch 12 eggs, 1 kg onion</code>, or /watch right after a hunt to save that list.';
   const L = [`👀 <b>Your watch</b>`, `🧺 ${esc(w.list)}`,
-    `📍 ${w.lat.toFixed(3)}, ${w.lng.toFixed(3)} · every day after ${RUN_AT} IST · 1 hunt (${cfg.huntFee} 0G) per check`];
+    `📍 ${w.cityName || `${w.lat.toFixed(3)}, ${w.lng.toFixed(3)}`} · every day after ${RUN_AT} IST · 1 hunt (${cfg.huntFee} 0G) per check`];
   if (w.paused) L.push('⏸ Paused — you are out of hunts. /pay and it resumes.');
   const h = (w.history || []).slice(-7);
   if (h.length) L.push(`📊 ${h.map((x) => `${shortDay(x.at)} ${LABEL[x.best] || x.best} ₹${x.total}`).join(' → ')}`);
@@ -279,7 +279,7 @@ export async function watchCommand(chatId, cmd, arg, { send, edit }) {
   }
   // /watch [list]
   const u = user(chatId);
-  const loc = { lat: u.lat ?? cfg.defaultLat, lng: u.lng ?? cfg.defaultLng };
+  const loc = { lat: u.lat ?? cfg.defaultLat, lng: u.lng ?? cfg.defaultLng, cityName: u.cityName || (u.lat ? null : 'Mumbai') };
   let list = arg.trim();
   if (!list) {
     const last = lastList(chatId);

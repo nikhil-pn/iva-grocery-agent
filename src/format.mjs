@@ -21,7 +21,11 @@ export function huntMessage(r) {
     });
   });
   const b = r.basket;
-  const t = SHOPS.map((s) => `${LABEL[s.id]} ₹${b.totals[s.id].sum}${b.totals[s.id].missing ? ` (${b.totals[s.id].missing} missing)` : ''}`).join(' · ');
+  const t = SHOPS.map((s) => {
+    const x = b.totals[s.id];
+    if (x.missing >= r.items.length) return `${LABEL[s.id]} no results here`;
+    return `${LABEL[s.id]} ₹${x.sum}${x.missing ? ` (${x.missing} missing)` : ''}`;
+  }).join(' · ');
   lines.push(`\n🧺 <b>Whole basket:</b> ${t}`);
   lines.push(`🏆 <b>Cheapest single app: ${LABEL[b.best]} ₹${b.bestSum}</b>${b.saving > 0 ? ` — saves <b>₹${b.saving}</b> vs ${LABEL[b.worst]}` : ''}`);
   if (b.split < b.bestSum) lines.push(`✂️ Split across apps: ₹${b.split} (before delivery fees)`);

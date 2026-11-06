@@ -176,6 +176,9 @@ export async function hunt(input, loc, onProgress = () => {}) {
     }
   } else picks = matchPlain(items, lists);
 
+  if (!picks.some((pk) => SHOPS.some((s) => pk && pk[s.id]))) {
+    throw new Error('I couldn\'t find any of those in the shops near you. Try product names, like "12 eggs, 1 kg onion".');
+  }
   return { items, picks, tip, receipts, brain, degraded, basket: basket(items, picks) };
 }
 

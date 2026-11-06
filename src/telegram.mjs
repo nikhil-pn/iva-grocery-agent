@@ -23,7 +23,23 @@ function request(path, body, timeoutMs) {
   });
 }
 
+// IVA_DRY_TELEGRAM=1: print outgoing messages instead of calling Telegram (scripts/simulate.mjs).
+let dryId = 1000;
+const dryLog = [];
+export const dryMessages = () => dryLog;
+function dry(method, body) {
+  const strip = (t) => String(t || '').replace(/<[^>]+>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+  if (method === 'sendMessage' || method === 'editMessageText') {
+    const id = body.message_id || ++dryId;
+    dryLog.push({ method, id, text: strip(body.text) });
+    console.log(`\n── bot ${method === 'sendMessage' ? 'says' : `edits #${id}`} ──\n${strip(body.text)}${body.reply_markup ? `\n[buttons: ${JSON.stringify(body.reply_markup).slice(0, 200)}]` : ''}`);
+    return { message_id: id };
+  }
+  return true;
+}
+
 export async function tg(method, body = {}) {
+  if (process.env.IVA_DRY_TELEGRAM) return dry(method, body);
   const buf = await request(`/bot${cfg.telegramToken}/${method}`, body, method === 'getUpdates' ? 60_000 : 30_000);
   const j = JSON.parse(buf.toString('utf8'));
   if (!j.ok) throw new Error(`${method}: ${j.description}`);

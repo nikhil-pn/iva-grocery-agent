@@ -35,29 +35,45 @@ function payLink(chatId, amount) {
   return `${cfg.payPageUrl}?${p}`;
 }
 
-const WELCOME = (u) => `👋 <b>Hi, I'm Iva</b> — your grocery deal hunter.
+const EXAMPLE = '12 eggs, 1 kg onion, 1 litre milk';
+const INR_PER_0G = Number(process.env.IVA_0G_INR || 12.5); // rough, for display only
+const rs = (og) => `≈ ₹${Math.max(1, Math.round(og * INR_PER_0G))}`;
 
-Send me your shopping list and I'll check <b>Blinkit, Instamart and Zepto</b> near you and tell you the cheapest basket.
-Example: <i>12 eggs, 1 kg onion, amul butter 500g</i>
-(a 📷 photo of a list or a 🎙 voice note work too)
+// Buttons under the chat box, so nobody has to remember commands.
+const BTN = { example: `🧺 Try: ${EXAMPLE}`, deals: '🏷 Live deals', brain: "🧠 Iva's brain", pay: '💳 Pay', me: '🙋 Me', watch: '⏰ Daily check' };
+const KEYBOARD = { reply_markup: { resize_keyboard: true, is_persistent: true, keyboard: [
+  [{ text: BTN.example }],
+  [{ text: '📍 Share my location', request_location: true }, { text: BTN.deals }],
+  [{ text: BTN.pay }, { text: BTN.me }, { text: BTN.brain }],
+] } };
 
-📍 Share your location (📎 → Location) or send <code>/city pune</code>. Default: Mumbai.
+const WELCOME = (u) => `👋 <b>Hi, I'm Iva.</b> Send me your shopping list and I'll find the cheapest basket on <b>Blinkit, Instamart and Zepto</b>.
 
-💸 I pay for my own brain. Each hunt costs <b>${cfg.huntFee} 0G</b>, and that money tops up my 0G compute account. ${u.freeUsed < cfg.freeHunts ? `Your first ${cfg.freeHunts > 1 ? cfg.freeHunts + ' hunts are' : 'hunt is'} on me.` : ''}
-/brain — see my wallet, balance and 0G receipts
-/watch — I re-check your list every morning and tell you if it got cheaper
-/pay — buy hunts · /me — your credits`;
+Try: <i>${EXAMPLE}</i>
+📍 I'm hunting near ${u.cityName || (u.lat ? 'your location' : 'Mumbai')}. Tap "Share my location" to change it.
+
+${u.freeUsed < cfg.freeHunts ? '🎁 Your first hunt is free.' : `💳 A hunt costs ${cfg.huntFee} 0G (${rs(cfg.huntFee)}).`} I pay for my own AI brain on 0G with what I earn.
+
+More: /watch (I re-check your list every morning) · /deals (live deals) · /brain (my wallet and receipts)`;
+
+function meText(u) {
+  const free = u.freeUsed < cfg.freeHunts ? cfg.freeHunts - u.freeUsed : 0;
+  return `🙋 <b>${u.credits}</b> paid hunt${u.credits === 1 ? '' : 's'}${free ? ` + ${free} free` : ''} left.
+Hunts so far: ${u.hunts || 0} · you saved ≈ ₹${u.savedRs || 0}.
+📍 ${u.cityName || (u.lat ? 'your shared location' : 'Mumbai (default)')}`;
+}
+
+const SMALL_TALK = /^(hi+|hello+|hey+|yo|ok(ay)?|thanks?|thank you|thx|ty|good (morning|night|evening|afternoon)|hola|namaste|test|start|help|menu|\?)[!. ]*$/i;
 
 async function payPrompt(chatId) {
-  const amt = Number((cfg.huntFee * 5).toFixed(2));
-  return send(chatId, `💸 Each hunt is <b>${cfg.huntFee} 0G</b>. That money pays for my 0G brain, so I keep working without anyone topping me up.
+  const amt = 1;
+  return send(chatId, `💳 <b>A hunt costs ${cfg.huntFee} 0G</b> (${rs(cfg.huntFee)}). 1 0G = ${Math.floor(amt / cfg.huntFee + 1e-9)} hunts. Your 0G pays for my AI brain, so I keep running without anyone topping me up.
 
-1️⃣ <a href="${payLink(chatId, amt)}">Open the pay page</a> (MetaMask / any EVM wallet on <b>0G mainnet</b>, chain 16661)
-2️⃣ Come back with the button there, or send <code>/paid 0x…txhash</code>
-
-Or send any amount of 0G to my wallet directly:
+<b>Easiest:</b> send 0G on <b>0G mainnet</b> from any wallet to
 <code>${ivaAddress}</code>
-${amt} 0G = ${Math.floor(amt / cfg.huntFee + 1e-9)} hunts.`);
+then paste the transaction hash here.
+
+Or use the <a href="${payLink(chatId, amt)}">pay page</a> (MetaMask), then tap "Return to Iva".`, KEYBOARD);
 }
 
 async function claimPayment(chatId, hash) {
@@ -111,7 +127,11 @@ async function doHunt(chatId, input) {
       calls: r.receipts.map((x) => x.requestId), cost0G: r.receipts.reduce((a, x) => a + x.cost0G, 0),
       best: r.basket.best, saving: r.basket.saving, paidWith });
     const after = user(chatId);
-    if (after.credits === 0 && after.freeUsed >= cfg.freeHunts) await send(chatId, 'That was your last hunt. /pay to get more — it keeps my brain running.');
+    if (after.credits === 0 && after.freeUsed >= cfg.freeHunts) {
+      await send(chatId, paidWith === 'free'
+        ? `🎁 That was your free hunt. Want more? 1 0G = ${Math.floor(1 / cfg.huntFee + 1e-9)} hunts (${rs(1)}): tap 💳 Pay. Tip: /watch re-checks this list every morning.`
+        : `That was your last hunt. Tap 💳 Pay for more: it keeps my brain running.`);
+    }
   } catch (e) {
     console.error('[hunt]', e);
     if (paidWith === 'credit') updateUser(chatId, { credits: user(chatId).credits + 1 });
@@ -131,7 +151,7 @@ async function voiceToWav(buf) {
   } finally { rmSync(dir, { recursive: true, force: true }); }
 }
 
-async function onUpdate(up) {
+export async function onUpdate(up) {
   const msg = up.message;
   if (!msg || msg.chat.type !== 'private') return;
   const chatId = msg.chat.id;
@@ -139,8 +159,8 @@ async function onUpdate(up) {
   const u = user(chatId);
 
   if (msg.location) {
-    updateUser(chatId, { lat: msg.location.latitude, lng: msg.location.longitude });
-    return send(chatId, '📍 Got it — I\'ll hunt near you. Now send your list.');
+    updateUser(chatId, { lat: msg.location.latitude, lng: msg.location.longitude, cityName: null });
+    return send(chatId, '📍 Got it. I\'ll hunt near you now. Send your list.', KEYBOARD);
   }
   if (msg.photo) {
     const ph = msg.photo[msg.photo.length - 1];
@@ -153,6 +173,14 @@ async function onUpdate(up) {
   }
   if (!text) return;
 
+  // Buttons and small talk never cost a hunt.
+  if (text === BTN.example) return doHunt(chatId, { kind: 'text', text: EXAMPLE });
+  if (text === BTN.deals) return send(chatId, await dealsReply({ lat: u.lat ?? cfg.defaultLat, lng: u.lng ?? cfg.defaultLng, item: '' }));
+  if (text === BTN.brain) { const s = await brainState({ fresh: true }); return send(chatId, brainMessage(s, totals(), recentEvents(null, 40), ivaAddress)); }
+  if (text === BTN.pay) return payPrompt(chatId);
+  if (text === BTN.me) return send(chatId, meText(u), KEYBOARD);
+  if (SMALL_TALK.test(text) || text.length < 2) return send(chatId, WELCOME(u), KEYBOARD);
+
   // A pasted transaction hash on its own (with or without /paid) is a payment claim.
   const hashOnly = text.match(/^(?:\/paid\s*)?((?:0x)?[0-9a-fA-F]{64})$/);
   if (hashOnly) return claimPayment(chatId, hashOnly[1]);
@@ -162,18 +190,20 @@ async function onUpdate(up) {
   switch (cmd.toLowerCase().replace(/@.*$/, '')) {
     case '/start':
       if (/^(0x)?[0-9a-fA-F]{64}$/.test(arg)) return claimPayment(chatId, arg);
-      return send(chatId, WELCOME(u));
-    case '/help': return send(chatId, WELCOME(u));
+      return send(chatId, WELCOME(u), KEYBOARD);
+    case '/help': return send(chatId, WELCOME(u), KEYBOARD);
     case '/pay': return payPrompt(chatId);
     case '/paid':
       if (!/^(0x)?[0-9a-fA-F]{64}$/.test(arg)) return send(chatId, 'Send it like: <code>/paid 0x…</code> (the transaction hash)');
       return claimPayment(chatId, arg);
-    case '/me': return send(chatId, `🙋 You have <b>${u.credits}</b> paid hunts${u.freeUsed < cfg.freeHunts ? ` + ${cfg.freeHunts - u.freeUsed} free` : ''}. Hunts so far: ${u.hunts || 0} · saved ≈ ₹${u.savedRs || 0}.\n📍 ${u.lat ? `${u.lat.toFixed(3)}, ${u.lng.toFixed(3)}` : 'Mumbai (default)'}`);
+    case '/me': return send(chatId, meText(u), KEYBOARD);
     case '/city': {
-      const c = CITIES[arg.toLowerCase()];
-      if (!c) return send(chatId, `Cities: ${Object.keys(CITIES).join(', ')} — or share your location.`);
-      updateUser(chatId, { lat: c[0], lng: c[1] });
-      return send(chatId, `📍 Hunting in <b>${arg}</b> now.`);
+      const key = arg.toLowerCase().trim();
+      const c = CITIES[key];
+      if (!c) return send(chatId, `Send one of: ${Object.keys(CITIES).map((x) => x[0].toUpperCase() + x.slice(1)).join(', ')}. Or tap "📍 Share my location".`, KEYBOARD);
+      const cityName = key[0].toUpperCase() + key.slice(1);
+      updateUser(chatId, { lat: c[0], lng: c[1], cityName });
+      return send(chatId, `📍 Done. I'll hunt in <b>${cityName}</b> now. Send your list.`, KEYBOARD);
     }
     case '/deals': // Arkiv: live deals near you, read from the public feed
       return send(chatId, await dealsReply({ lat: u.lat ?? cfg.defaultLat, lng: u.lng ?? cfg.defaultLng, item: arg }));
@@ -184,7 +214,7 @@ async function onUpdate(up) {
     case '/watch': case '/watches': case '/unwatch': case '/watchnow': // /watch daily alert (src/watch.mjs)
       return watchCommand(chatId, cmd.toLowerCase().replace(/@.*$/, ''), text.slice(cmd.length).trim(), { send, edit });
     default:
-      if (cmd.startsWith('/')) return send(chatId, 'I know /start /pay /paid /me /city /brain /deals /watch — or just send your list.');
+      if (cmd.startsWith('/')) return send(chatId, 'I didn\'t get that command. Just send your shopping list, or use the buttons below.', KEYBOARD);
       return doHunt(chatId, { kind: 'text', text });
   }
 }
@@ -220,12 +250,14 @@ async function main() {
   await poll(onUpdate);
 }
 
-for (const sig of ['SIGTERM', 'SIGINT']) {
-  process.on(sig, async () => {
-    setTimeout(() => process.exit(0), 3000).unref();
-    await closeAll().catch(() => {});
-    process.exit(0);
-  });
+// Run the bot only when started directly (node src/bot.mjs); scripts can import onUpdate.
+if (import.meta.url === `file://${process.argv[1]}`) {
+  for (const sig of ['SIGTERM', 'SIGINT']) {
+    process.on(sig, async () => {
+      setTimeout(() => process.exit(0), 3000).unref();
+      await closeAll().catch(() => {});
+      process.exit(0);
+    });
+  }
+  main().catch((e) => { console.error(e); process.exit(1); });
 }
-
-main().catch((e) => { console.error(e); process.exit(1); });
