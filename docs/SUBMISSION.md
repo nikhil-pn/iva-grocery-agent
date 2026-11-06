@@ -37,7 +37,12 @@ All payments, deposits and inference request IDs are logged and listed in the RE
 
 **Sponsors / tracks (2 partner picks):**
 - **0G**: Agents That Pay for Themselves · Build with 0G Private Computer
-- **Arkiv**: Build on Arkiv (from scratch). Every hunt publishes its winning deals as Arkiv entities that **expire after 6 h**; `/deals` and the website read them back. Docs in `arkiv/`.
+- **Arkiv**: Build on Arkiv (from scratch). In plain words, Arkiv is a public notice board where every note deletes itself on a timer.
+  After every hunt Iva pins each price she found (item, shop, ₹, city, link), signed by her own wallet and set to delete itself in 6 h.
+  Users get `/deals`: free, never-stale deals near them from hunts other people already paid for. Anyone can query the feed with no key,
+  and we run no database. Proof: [every deal](https://rabdi.explorer.arkiv.network/address/0xbbd2beC1DFd26272c171d174BeEb4eE0488b918d) ·
+  [first publish tx](https://rabdi.explorer.arkiv.network/tx/0x89f91c6c19c3b055bf37c3f215c57a5492aa28a4d544b00e5bcc551737bd7c56) ·
+  [live on the site](https://iva-grocery-agent.vercel.app/#deals). Docs in `arkiv/`.
 
 **Links:** repo https://github.com/nikhil-pn/iva-grocery-agent · bot https://t.me/IvaGroceryAgentbot · site https://iva-grocery-agent.vercel.app
 

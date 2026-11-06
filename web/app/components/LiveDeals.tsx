@@ -1,4 +1,4 @@
-import { arkivAddrUrl, arkivEntityUrl, arkivTxUrl, getLiveDeals } from "@/lib/deals";
+import { arkivAddrUrl, arkivEntityUrl, getLiveDeals } from "@/lib/deals";
 import { ARKIV, BOT_URL, IVA_WALLET, short } from "@/lib/iva";
 import ExpiresIn from "./ExpiresIn";
 import TimeAgo from "./TimeAgo";
@@ -67,24 +67,15 @@ export default async function LiveDeals() {
           </ul>
         )}
       </div>
-      <p className="mt-2 break-words text-xs text-muted">
-        Read-only, from Arkiv&apos;s public Rabdi endpoint, cached ~60 s. Query:{" "}
-        <code className="break-all">
-          arkiv.schema = str(&apos;{ARKIV.schema}&apos;) AND city = str(&apos;mumbai&apos;) AND $owner = addr({short(IVA_WALLET)})
+      <details className="mt-2 text-xs text-muted">
+        <summary className="tap cursor-pointer">
+          Read live from Arkiv&apos;s public network, refreshed every minute. Show the exact query ▾
+        </summary>
+        <code className="mt-2 block break-all rounded-xl bg-ink p-3 font-mono text-fg/80">
+          arkiv.schema = str(&apos;{ARKIV.schema}&apos;) AND city = str(&apos;mumbai&apos;) AND $owner = addr({IVA_WALLET})
+          ORDER BY huntAt DESC
         </code>
-        . First publish:{" "}
-        <a href={arkivTxUrl(ARKIV.proofTx)} {...ext} className="font-mono text-lime underline-offset-2 hover:underline">
-          tx {short(ARKIV.proofTx, 8, 4)}
-        </a>{" "}
-        ·{" "}
-        <a href={arkivEntityUrl(ARKIV.proofEntity)} {...ext} className="font-mono text-lime underline-offset-2 hover:underline">
-          entity {short(ARKIV.proofEntity, 8, 4)}
-        </a>{" "}
-        ·{" "}
-        <a href={arkivAddrUrl(IVA_WALLET)} {...ext} className="text-lime underline-offset-2 hover:underline">
-          all of Iva&apos;s deals
-        </a>
-      </p>
+      </details>
     </div>
   );
 }

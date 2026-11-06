@@ -64,7 +64,7 @@ function Section({
 
 function Header() {
   return (
-    <header className="fixed inset-x-0 top-0 z-30">
+    <header className="fixed inset-x-0 top-0 z-30 bg-bg/75 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
         <a href="#top" className="flex items-center gap-2.5">
           <img src="/brand/iva-mark-96.png" alt="" className="size-9 rounded-xl" />
@@ -338,6 +338,12 @@ function LoopSection() {
 }
 
 function DealsSection() {
+  const proof: { label: string; sub: string; href: string }[] = [
+    { label: "Every deal Iva has posted", sub: "her wallet on the Arkiv explorer", href: `${ARKIV.explorer}/address/${IVA_WALLET}` },
+    { label: "First publish: 7 deals, 1 tx", sub: `tx ${short(ARKIV.proofTx, 8, 4)}`, href: `${ARKIV.explorer}/tx/${ARKIV.proofTx}` },
+    { label: "One deal, up close", sub: `entity ${short(ARKIV.proofEntity, 8, 4)}`, href: `${ARKIV.explorer}/entity/${ARKIV.proofEntity}` },
+    { label: "The Arkiv docs", sub: "why, schema, how, friction", href: `${REPO_URL}/tree/main/arkiv` },
+  ];
   return (
     <Section
       id="deals"
@@ -345,32 +351,32 @@ function DealsSection() {
       rest="deals, live on Arkiv."
       lead={
         <>
-          Every hunt publishes its winning prices to Arkiv. A grocery deal lasts hours, so each one expires on its own
-          after {ARKIV.dealHours} h. Anyone can read the feed. Ask the bot for <code className="text-fg">/deals</code>.
+          Think of Arkiv as a <span className="text-fg">public notice board where every note deletes itself on a timer</span>.
+          Iva pins every price she finds there. Grocery deals last hours, so her notes do too.
         </>
       }
     >
-      <div className="mb-10 grid grid-cols-1 gap-4 md:grid-cols-3 [&>*]:min-w-0">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 [&>*]:min-w-0">
         <div className="card p-6">
           <span className="serif-i text-3xl text-lime">1</span>
           <p className="mt-3 font-semibold">A hunt finds a price</p>
-          <p className="mt-1 text-sm text-muted">Say Zepto has 12 eggs for ₹106 in Mumbai, cheaper than Instamart and Blinkit.</p>
+          <p className="mt-1 text-sm text-muted">Zepto has 12 eggs for ₹106 in Mumbai, cheaper than Instamart and Blinkit.</p>
         </div>
         <div className="card p-6">
           <span className="serif-i text-3xl text-lime">2</span>
-          <p className="mt-3 font-semibold">Iva writes it to Arkiv</p>
+          <p className="mt-3 font-semibold">Iva pins it on Arkiv</p>
           <div className="mt-3 rounded-xl bg-ink p-3 font-mono text-[11.5px] leading-5 text-fg/80">
             <p>
               <span className="text-lime">item</span> egg · <span className="text-lime">shop</span> zepto
             </p>
             <p>
-              <span className="text-lime">price</span> 106 · <span className="text-lime">city</span> mumbai
+              <span className="text-lime">price</span> ₹106 · <span className="text-lime">city</span> mumbai
             </p>
             <p>
-              <span className="text-lime">owner</span> {short(IVA_WALLET)}
+              <span className="text-lime">signed by</span> Iva {short(IVA_WALLET)}
             </p>
             <p>
-              <span className="text-lime">expires</span> in {ARKIV.dealHours} h
+              <span className="text-lime">deletes itself</span> in {ARKIV.dealHours} h
             </p>
           </div>
         </div>
@@ -378,11 +384,69 @@ function DealsSection() {
           <span className="serif-i text-3xl text-lime">3</span>
           <p className="mt-3 font-semibold">Anyone reads it, then it&apos;s gone</p>
           <p className="mt-1 text-sm text-muted">
-            The bot&apos;s /deals and this page query it by city. After {ARKIV.dealHours} h Arkiv deletes it by itself, so
-            you never see a stale price. No database, no cleanup job.
+            The bot&apos;s /deals and this page read it by city. After {ARKIV.dealHours} h Arkiv deletes it by itself, so
+            nobody ever sees an old price.
           </p>
         </div>
       </div>
+
+      <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 [&>*]:min-w-0">
+        <div className="rounded-3xl bg-lime p-6 text-ink">
+          <p className="serif-i text-3xl">what you get</p>
+          <ul className="mt-4 space-y-2.5">
+            <li>
+              <b>Free deals.</b> Send <code>/deals</code> or <code>/deals eggs</code>: the cheapest live prices near you,
+              from hunts other people already paid for. It doesn&apos;t use a hunt.
+            </li>
+            <li>
+              <b>Never stale.</b> Every price is at most {ARKIV.dealHours} hours old, or it&apos;s gone.
+            </li>
+            <li>
+              <b>Open.</b> Any app or agent can read the same feed. No API key, no account.
+            </li>
+          </ul>
+        </div>
+        <div className="card p-6">
+          <p className="serif-i text-3xl text-lime">what&apos;s built</p>
+          <ul className="mt-4 space-y-2.5 text-sm text-muted">
+            <li>
+              <span className="text-fg">One record per item per shop</span>, schema <code className="text-fg">{ARKIV.schema}</code>:
+              item, shop, price, ₹/kg or ₹/piece, city, area, time seen, product link.
+            </li>
+            <li>
+              <span className="text-fg">Written by Iva&apos;s own wallet</span>, the same one that earns 0G. Up to 12 deals
+              in one transaction, after the user already has their answer.
+            </li>
+            <li>
+              <span className="text-fg">Read with one query</span>: city + item, cheapest first, only deals signed by Iva,
+              so nobody can sneak fake prices in.
+            </li>
+            <li>
+              <span className="text-fg">Nothing to run</span>: no database, no server, no cleanup job.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
+        {proof.map((p) => (
+          <a key={p.label} href={p.href} {...ext} className="card tap block p-4 transition-colors hover:border-lime">
+            <p className="font-semibold">{p.label} ↗</p>
+            <p className="mt-1 break-all font-mono text-xs text-muted">{p.sub}</p>
+          </a>
+        ))}
+      </div>
+      <div className="mt-3 flex items-center gap-3 overflow-x-auto rounded-2xl bg-ink px-4 py-3 font-mono text-[13px]">
+        <span className="hidden shrink-0 text-muted sm:inline">Try it yourself:</span>
+        <span className="whitespace-nowrap">
+          <span className="text-lime">$ </span>node scripts/arkiv-query.mjs eggs
+        </span>
+        <span className="ml-auto shrink-0">
+          <CopyButton text="node scripts/arkiv-query.mjs eggs" />
+        </span>
+      </div>
+
+      <p className="mt-14 mb-4 serif-i text-3xl text-lime">on the board right now</p>
       <Suspense fallback={<LiveDealsSkeleton />}>
         <LiveDeals />
       </Suspense>

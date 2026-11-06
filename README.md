@@ -120,7 +120,24 @@ other people trade it. Revenue from our own trades wouldn't count, so the servic
 
 ## Arkiv: live deal feed
 
-Grocery discounts last hours, so Iva's deals do too. After every hunt she publishes the product she
+**In plain words:** Arkiv is a public notice board where every note deletes itself on a timer.
+After every hunt, Iva pins each price she found there, signed by her own wallet, set to delete itself in 6 hours.
+
+| | |
+|---|---|
+| **What Iva does** | After every hunt she publishes one record per item per shop (item, shop, ₹ price, ₹/kg or ₹/piece, city, link). |
+| **What users get** | `/deals` or `/deals eggs`: the cheapest live prices near them, from hunts other people already paid for. Free, and never older than 6 h. |
+| **What anyone gets** | An open feed. Any app or agent can query it by city and item, with no API key and no account. |
+| **What we run** | Nothing: no database, no server, no cleanup job. Arkiv deletes old prices itself. |
+
+**Proof (click):**
+[every deal Iva has posted](https://rabdi.explorer.arkiv.network/address/0xbbd2beC1DFd26272c171d174BeEb4eE0488b918d) ·
+[first publish, 7 deals in 1 tx](https://rabdi.explorer.arkiv.network/tx/0x89f91c6c19c3b055bf37c3f215c57a5492aa28a4d544b00e5bcc551737bd7c56) ·
+[one deal up close](https://rabdi.explorer.arkiv.network/entity/0xd7c8e9128990e1e45e66df6fcd5a269a3dab9f4865f66104ff62010217614d50) ·
+[live on the website](https://iva-grocery-agent.vercel.app/#deals) ·
+run `node scripts/arkiv-query.mjs eggs` yourself.
+
+**The details:** grocery discounts last hours, so Iva's deals do too. After every hunt she publishes the product she
 matched for each item in each shop as an **[Arkiv](https://arkiv.network) entity that expires after 6 hours**.
 Each entity carries the item, shop, ₹ price, ₹/kg or ₹/piece, city, ~5 km cell, the time she saw it, and
 the product link. Arkiv deletes it on time, so stale prices never show. Anyone can query the feed by

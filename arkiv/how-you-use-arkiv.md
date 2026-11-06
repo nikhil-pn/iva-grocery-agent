@@ -1,5 +1,15 @@
 # How Iva uses Arkiv
 
+> **In plain words:** Arkiv is a public notice board where every note deletes itself on a timer.
+> 1. Iva hunts a grocery list and finds, say, Zepto's 12 eggs at ₹106 in Mumbai.
+> 2. She pins that price on Arkiv, signed by her own wallet, set to delete itself in 6 hours.
+> 3. Anyone reads it (`/deals eggs` in the bot, the website, or any script) until it disappears by itself.
+>
+> Users get free, never-stale deals near them. We run no database, server or cleanup job.
+> Proof: [every deal Iva has posted](https://rabdi.explorer.arkiv.network/address/0xbbd2beC1DFd26272c171d174BeEb4eE0488b918d) ·
+> [first publish, 7 deals in 1 tx](https://rabdi.explorer.arkiv.network/tx/0x89f91c6c19c3b055bf37c3f215c57a5492aa28a4d544b00e5bcc551737bd7c56) ·
+> [live on the website](https://iva-grocery-agent.vercel.app/#deals).
+
 All Arkiv code is in [`src/arkiv.mjs`](../src/arkiv.mjs) and uses `@arkiv-network/sdk` 1.0.1
 with `viem` on the **Rabdi testnet**. The bot has three small hooks into it, all in
 [`src/bot.mjs`](../src/bot.mjs).
