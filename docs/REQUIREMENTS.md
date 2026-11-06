@@ -14,6 +14,7 @@
 | Wanted: job worth paying for | ✅ | cheapest basket across 3 apps, ₹ saved |
 | Wanted: budget-aware | ✅ | tier chosen from her own balance before every job |
 | Wanted: agents that hire/pay other agents | ❌ | not built |
+| Bonus: does the whole job | ✅ | "order" places the basket on Zepto via Zepto's official MCP (owner-only beta, YES-gated) |
 | Not wanted: a human refilling the agent's wallet | ✅ | only customer payments; refunds went out, never in |
 
 ## ♾️ Build with 0G Private Computer

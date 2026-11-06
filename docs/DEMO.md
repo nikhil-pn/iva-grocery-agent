@@ -1,16 +1,18 @@
-# Demo video script (target 2:40, hard limit under 3:00)
+# Demo video script (target 2:45, hard limit under 3:00)
 
-Record the screen (Telegram Desktop or web.telegram.org, plus a browser tab for chainscan.0g.ai).
+Record the screen (Telegram Desktop or web.telegram.org, plus a browser tab for chainscan.0g.ai and the website).
 Use your own voice in English: no AI voiceover, no speed-up, at least 720p.
+Before recording, run one hunt so the Arkiv feed has live deals (they expire after 6 h).
 
 | Time | Show | Say |
 |---|---|---|
-| 0:00–0:15 | Bot chat header | "Most AI agents die the day their owner stops paying the API bill. This is Iva, a grocery agent that pays for her own brain on 0G, out of the money she saves you." |
-| 0:15–0:50 | Type `12 eggs, 1 kg onion, 1 litre milk` → result | "I send my list. Iva checks Blinkit, Instamart and Zepto at my location, matches the same product across apps and finds the cheapest basket: Zepto, saving ₹75. Every answer shows the 0G request IDs it paid for, and this one ran sealed inside a TEE." |
-| 0:50–1:05 | `/brain` | "This is Iva's brain: her own wallet, her 0G compute balance, today's spend against a 0.5 0G cap that 0G itself enforces, and every payment, deposit and request." |
-| 1:05–1:35 | OKX Wallet → Send 0.2 0G to Iva → paste hash in the bot → "Got 0.2 0G" + "⚡ Topped up my own brain" → open the deposit tx on chainscan | "A customer pays 0.2 0G per hunt. Iva verifies it onchain, and within seconds she signs `depositFor` herself, moving the money into her own 0G compute account. No human tops her up." |
-| 1:35–2:10 | Run `scripts/demo-tier.sh lean` (off camera) → send a list → 🟡 lean, `qwen3.7-flash`; then `demo-tier.sh survival` → send `amul butter 500g` → 🔴 survival reply | "She is budget-aware. When money runs low she switches to a model 50 times cheaper. At her spend cap she drops to survival: no AI, still answering, and she tells you why. Without her 0G brain she even confuses butter cookies with butter. She degrades; she doesn't crash." |
-| 2:10–2:35 | README diagram / repo | "What breaks without 0G: Iva can't understand your list, can't match products across apps, and can't pay for her own thinking. Iva is tool-less: she never orders for you and can't be steered into anything but price hunting." |
-| 2:35–2:45 | Bot link | "Iva earns, Iva pays, Iva keeps working. Try her at t.me/IvaGroceryAgentbot." |
+| 0:00–0:15 | Bot chat with the buttons | "Most AI agents die the day their owner stops paying the API bill. This is Iva, a grocery agent that pays for her own brain on 0G, out of the money she saves you." |
+| 0:15–0:45 | Tap **🧺 Try: 12 eggs, 1 kg onion, 1 litre milk** → result | "I send my list. Iva checks Blinkit, Instamart and Zepto near me, matches the same product across apps and finds the cheapest basket. Every answer shows the 0G request IDs she paid for, sealed inside a TEE." |
+| 0:45–1:00 | Reply **order** → Zepto bill → **YES** → order placed (or play the recording from the real order) | "And she can buy it. Through Zepto's official MCP she fills my cart, her 0G brain picks the products, and she only orders after I say YES." |
+| 1:00–1:30 | Tap **💳 Pay** → send 0.2 0G from a wallet → paste the hash → "Got 0.2 0G" + "⚡ Topped up my own brain" → open the deposit tx on chainscan | "Each hunt costs 0.2 0G. Iva verifies the payment onchain, and within seconds she signs `depositFor` herself into her own 0G compute account. No human tops her up." |
+| 1:30–1:45 | Tap **🧠 Iva's brain** | "Her wallet, her 0G compute balance, today's spend against a 0.5 0G cap that 0G enforces, and every payment, deposit and request." |
+| 1:45–2:10 | `scripts/demo-tier.sh lean` (off camera) → a list → 🟡 lean; `demo-tier.sh survival` → `amul butter 500g` → 🔴 survival | "She is budget-aware: when money runs low she switches to a model 50× cheaper; at her cap she drops to survival, with no AI but still answering. She degrades; she doesn't crash." |
+| 2:10–2:30 | **🏷 Live deals** in the bot + the website's "Live deals (from Arkiv)" + one entity on the Arkiv explorer | "Every hunt publishes its winning deals to Arkiv as entities that expire on their own after 6 hours, because grocery deals don't last. Anyone can read the feed." |
+| 2:30–2:45 | `/watch` reply, then the website | "With /watch she re-checks my list every morning. Iva earns, Iva pays, Iva keeps working. Try her at t.me/IvaGroceryAgentbot." |
 
 After recording: `scripts/demo-tier.sh reset`.

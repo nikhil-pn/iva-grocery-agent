@@ -21,6 +21,10 @@ She reads her own balance before every job and picks the best brain she can affo
 
 The spend cap is a 0.5 0G daily `credit_limit` enforced by 0G on her API key.
 
+**And she can buy it (private beta):** say *order* and Iva fills your Zepto cart through **Zepto's official MCP**,
+with her 0G brain picking the products. She shows Zepto's bill and orders only after you reply YES (cash on delivery,
+or Zepto's UPI link). This was tested with a real order on 2026-11-07.
+
 **Why people come back tomorrow:** `/watch` saves your list, and every morning Iva re-checks it and tells you today's cheapest basket
 and whether it got cheaper. Each daily check is 1 paid hunt, which keeps funding her brain.
 
