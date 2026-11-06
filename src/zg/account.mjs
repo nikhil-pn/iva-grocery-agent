@@ -4,6 +4,7 @@
 //  - the Payment Layer vault onchain: balanceOf(iva), no key needed
 import { cfg } from '../config.mjs';
 import { vaultBalance0G } from '../chain.mjs';
+import { totals } from '../ledger.mjs';
 
 export async function funds() {
   let router = null, vault = null, total = null, err = null;
@@ -25,8 +26,19 @@ export async function funds() {
     try { vault = await vaultBalance0G(); } catch (e) { err ||= e.message; }
   }
   // What the Router will actually let Iva spend: ledger + 80% of the vault.
-  const spendable = total ?? ((router || 0) + (vault || 0) * 0.8);
-  return { router, vault, total, spendable, err };
+  // Without a management key the Router ledger is invisible (the Router pulls
+  // funds out of the vault into it), so fall back to Iva's own books:
+  // everything she deposited minus everything 0G charged her, never more
+  // than what the vault + that ledger could hold.
+  let spendable = total;
+  let source = 'router /account/funds';
+  if (spendable == null) {
+    const t = totals();
+    const books = Math.max(0, t.deposited - t.spent);
+    spendable = Math.max((vault || 0) * 0.8, books);
+    source = `own books (deposited ${t.deposited.toFixed(4)} − spent ${t.spent.toFixed(4)}) + vault onchain`;
+  }
+  return { router, vault, total, spendable, source, err };
 }
 
 /** Today's usage on the capped sk- key, if the management key can read keys. */
