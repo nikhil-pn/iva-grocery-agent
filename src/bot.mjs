@@ -35,9 +35,8 @@ function payLink(chatId, amount) {
 const WELCOME = (u) => `👋 <b>Hi, I'm Iva</b> — your grocery deal hunter.
 
 Send me your shopping list and I'll check <b>Blinkit, Instamart and Zepto</b> near you and tell you the cheapest basket.
-• type it: <i>12 eggs, 1 kg onion, amul butter 500g</i>
-• or send a 📷 photo of a handwritten list
-• or a 🎙 voice note (Hindi / English / Malayalam)
+Example: <i>12 eggs, 1 kg onion, amul butter 500g</i>
+(a 📷 photo of a list or a 🎙 voice note work too)
 
 📍 Share your location (📎 → Location) or send <code>/city pune</code>. Default: Mumbai.
 

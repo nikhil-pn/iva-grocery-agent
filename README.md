@@ -15,11 +15,8 @@ Built at **ETHGlobal Mumbai 2026** for 0G's *Agents That Pay for Themselves* and
 India buys groceries from three 10-minute apps: **Blinkit, Swiggy Instamart and Zepto**. The
 same basket can cost noticeably different amounts on each, and nobody checks all three.
 
-Send Iva your list on Telegram, in any of three forms:
-
-- typed: `12 eggs, 1 kg onion, amul butter 500g`
-- a 📷 **photo of a handwritten list**
-- a 🎙 **voice note** in Hindi, English or Malayalam
+Send Iva your shopping list on Telegram, e.g. `12 eggs, 1 kg onion, amul butter 500g`
+(a 📷 photo of a list or a 🎙 voice note work too).
 
 Iva **reads it with 0G models** and searches all three apps **at your location**. She then **matches the
 same product across apps**, even when the brands, names and pack sizes differ ("2 × 6 pcs" against "12 Pieces").
@@ -67,7 +64,7 @@ keeps her own daily cap (`IVA_DAILY_CAP`). When either is hit she degrades to su
 and tells users why.
 
 ### What breaks if 0G is removed
-Iva can no longer read photos or voice notes, and she can't tell that "Amul Salted Butter 500 g" is butter
+Iva can no longer understand your list, and she can't tell that "Amul Salted Butter 500 g" is butter
 but "Amul Butter Cookies" isn't. Her survival mode shows exactly that. She also loses the way to pay for her
 own thinking, so she stops being an agent and becomes a script.
 
