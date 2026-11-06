@@ -148,6 +148,7 @@ export function publishDeals(r, loc) {
 }
 
 async function publishNow(r, loc) {
+  const keys = [], txs = [];
   try {
     if (!cfg.arkiv.enabled) return { ok: false, error: 'disabled' };
     if (!cfg.arkiv.privateKey) return { ok: false, error: 'no ARKIV_PRIVATE_KEY' };
@@ -155,7 +156,6 @@ async function publishNow(r, loc) {
     if (!deals.length) return { ok: true, keys: [], txs: [] };
     const w = walletClient();
     const expiration = ExpirationTime.fromHours(cfg.arkiv.dealHours);
-    const keys = [], txs = [];
     for (let i = 0; i < deals.length; i += BATCH) {
       const creates = deals.slice(i, i + BATCH).map((values) => ({ schema: Deals, values, expiration }));
       const res = await w.executeBatch({ creates });
@@ -174,8 +174,8 @@ async function publishNow(r, loc) {
     // an unfunded writer fails gas estimation with a bare "Execution error"; say what it is
     const bal = await publicClient().getBalance({ address: cfg.arkiv.address }).catch(() => null);
     if (bal === 0n) msg = `writer ${cfg.arkiv.address} has no tGLM for gas (faucet: https://hub.arkiv.network/faucet). ${msg}`;
-    console.error('[arkiv] publish failed:', msg);
-    return { ok: false, error: msg };
+    console.error('[arkiv] publish failed:', msg, keys.length ? `(${keys.length} published before it: ${txs.join(', ')})` : '');
+    return { ok: false, error: msg, keys, txs };
   }
 }
 
