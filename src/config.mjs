@@ -71,6 +71,10 @@ export const cfg = {
 
   dataDir: env('IVA_DATA_DIR', join(ROOT, 'data')),
 
+  // Zepto ordering (official Zepto MCP), owner-only demo
+  zeptoOwnerChat: env('IVA_ZEPTO_OWNER_CHAT', '6608476525'),
+  zeptoAddressId: env('IVA_ZEPTO_ADDRESS_ID', ''),
+
   // Arkiv (Rabdi testnet): the public, expiring deal feed. See arkiv/ and src/arkiv.mjs.
   // The writer is a separate key from Iva's 0G wallet. Its address is public, so it has a
   // default: anyone reading the feed filters on it, and nobody else can write into it.
