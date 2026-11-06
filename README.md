@@ -105,6 +105,28 @@ So right now **you hire Iva directly on Telegram** by paying per hunt.
 **Status:** Iva isn't registered on comfy yet. It's the next step (see [TODO.md](TODO.md)). A token adds income only when
 other people trade it. Revenue from our own trades wouldn't count, so the service fee stays Iva's main income.
 
+## Arkiv: live deal feed
+
+Grocery discounts last hours, so Iva's deals do too. After every hunt she publishes the product she
+matched for each item in each shop as an **[Arkiv](https://arkiv.network) entity that expires after 6 hours**.
+Each entity carries the item, shop, ₹ price, ₹/kg or ₹/piece, city, ~5 km cell, the time she saw it, and
+the product link. Arkiv deletes it on time, so stale prices never show. Anyone can query the feed by
+attribute: no API key from us, and no server or database to run.
+
+- **In the bot:** `/deals` (or `/deals eggs`) shows the cheapest live deals near you, read from Arkiv,
+  with "expires in Xh Ym" and a link.
+- **Network:** Arkiv Rabdi testnet (chain `7794095`). Schema `iva.deal.v1`.
+- **Writer wallet** (owner of every deal): [`0x489C565e0f7770A3760cE742b89ee2A1Fa78cFC0`](https://rabdi.explorer.arkiv.network/address/0x489C565e0f7770A3760cE742b89ee2A1Fa78cFC0)
+- **One runnable query** (no keys needed):
+  ```bash
+  npm install && node scripts/arkiv-query.mjs eggs     # live egg deals in Mumbai; --city pune, --json
+  ```
+  It sends this query, filtered to Iva's writer:
+  `arkiv.schema = str('iva.deal.v1') AND city = str('mumbai') AND item = str('egg') AND $owner = addr(0x489C…cFC0) ORDER BY unitPriceRs:dec ASC`
+- **A real entity:** ARKIV_PROOF_PENDING
+- Code: [`src/arkiv.mjs`](src/arkiv.mjs). Docs: [schema](arkiv/schema.md) · [why Arkiv](arkiv/why-arkiv.md) ·
+  [how we use it](arkiv/how-you-use-arkiv.md) · [friction log](arkiv/friction.md) · [reach](arkiv/reach.md)
+
 ## Run it yourself
 
 Requirements: Node 22+, Google Chrome (headless, for reading shop pages), and `ffmpeg` (for voice notes).
