@@ -16,6 +16,7 @@ import { startTreasury, treasuryTick } from './treasury.mjs';
 import { closeAll } from './shops/browser.mjs';
 import { user, updateUser, txUsed, markTx, logEvent, recentEvents, totals, recordIncome } from './ledger.mjs';
 import { txUrl } from './config.mjs';
+import { publishDeals, dealsReply } from './arkiv.mjs'; // Arkiv: expiring public deal feed
 
 const run = promisify(execFile);
 
@@ -101,6 +102,7 @@ async function doHunt(chatId, input) {
   try {
     const r = await hunt(input, loc, (msg) => edit(chatId, m.message_id, msg));
     await edit(chatId, m.message_id, huntMessage(r));
+    publishDeals(r, loc); // Arkiv: fire-and-forget, never throws, never delays the reply
     updateUser(chatId, { hunts: (u.hunts || 0) + 1, savedRs: (u.savedRs || 0) + (r.basket.saving || 0) });
     logEvent('hunt', { chat: String(chatId), kind: input.kind, items: r.items.length, tier: r.brain.tier,
       calls: r.receipts.map((x) => x.requestId), cost0G: r.receipts.reduce((a, x) => a + x.cost0G, 0),
@@ -170,6 +172,8 @@ async function onUpdate(up) {
       updateUser(chatId, { lat: c[0], lng: c[1] });
       return send(chatId, `📍 Hunting in <b>${arg}</b> now.`);
     }
+    case '/deals': // Arkiv: live deals near you, read from the public feed
+      return send(chatId, await dealsReply({ lat: u.lat ?? cfg.defaultLat, lng: u.lng ?? cfg.defaultLng, item: arg }));
     case '/brain': {
       const s = await brainState({ fresh: true });
       return send(chatId, brainMessage(s, totals(), recentEvents(null, 40), ivaAddress));
@@ -202,6 +206,7 @@ async function main() {
     { command: 'paid', description: 'Claim a payment: /paid <txhash>' },
     { command: 'me', description: 'Your credits and location' },
     { command: 'city', description: 'Set city: /city pune' },
+    { command: 'deals', description: 'Live deals near you (Arkiv): /deals eggs' },
   ] });
   console.log(`Iva up as @${me.username} · wallet ${ivaAddress}`);
   startTreasury((ev) => console.log('[treasury]', ev.type, ev.amount0G, ev.tx));
