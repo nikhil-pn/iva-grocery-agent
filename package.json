@@ -14,6 +14,7 @@
     "treasury": "node scripts/treasury-once.mjs"
   },
   "dependencies": {
+    "@arkiv-network/sdk": "^1.0.1",
     "playwright-core": "^1.65.0",
     "viem": "^2.57.16"
   }

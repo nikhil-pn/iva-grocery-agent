@@ -70,6 +70,18 @@ export const cfg = {
   chrome: env('IVA_CHROME', '/opt/google/chrome/chrome'),
 
   dataDir: env('IVA_DATA_DIR', join(ROOT, 'data')),
+
+  // Arkiv (Rabdi testnet): the public, expiring deal feed. See arkiv/ and src/arkiv.mjs.
+  // The writer is a separate key from Iva's 0G wallet. Its address is public, so it has a
+  // default: anyone reading the feed filters on it, and nobody else can write into it.
+  arkiv: {
+    enabled: env('IVA_ARKIV', '1') !== '0',
+    privateKey: env('ARKIV_PRIVATE_KEY'),
+    address: env('ARKIV_ADDRESS', '0x489C565e0f7770A3760cE742b89ee2A1Fa78cFC0'),
+    accessKey: env('ARKIV_ACCESS_KEY', ''), // optional; not a secret, lifts the public RPC rate limit
+    dealHours: num('IVA_DEAL_HOURS', 6),
+    explorer: 'https://rabdi.explorer.arkiv.network',
+  },
 };
 
 mkdirSync(cfg.dataDir, { recursive: true });
