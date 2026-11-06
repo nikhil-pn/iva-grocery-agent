@@ -60,9 +60,14 @@ export async function sendNative(to, amount0G) {
 export async function verifyPayment(hash) {
   if (!/^0x[0-9a-fA-F]{64}$/.test(hash)) return { ok: false, reason: 'not a transaction hash' };
   let tx, rc;
-  try {
-    [tx, rc] = await Promise.all([pub.getTransaction({ hash }), pub.waitForTransactionReceipt({ hash, timeout: 60_000 })]);
-  } catch { return { ok: false, reason: 'transaction not found on 0G mainnet (yet)' }; }
+  // the payer may tap "back to Telegram" before the tx is mined: keep looking for ~60 s
+  for (let i = 0; i < 20 && !tx; i++) {
+    tx = await pub.getTransaction({ hash }).catch(() => null);
+    if (!tx) await new Promise((r) => setTimeout(r, 3000));
+  }
+  if (!tx) return { ok: false, reason: 'I can\'t see that transaction on 0G mainnet. If your wallet shows it as pending or failed, try paying again' };
+  try { rc = await pub.waitForTransactionReceipt({ hash, timeout: 90_000 }); }
+  catch { return { ok: false, reason: 'that transaction is still pending, send the hash again in a minute' }; }
   if (rc.status !== 'success') return { ok: false, reason: 'transaction failed' };
   const to = (tx.to || '').toLowerCase();
   const amount0G = Number(formatEther(tx.value));
