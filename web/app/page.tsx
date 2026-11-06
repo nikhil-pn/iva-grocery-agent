@@ -169,7 +169,7 @@ function Hero() {
 function TelegramMock() {
   const h = SAMPLE_HUNT;
   return (
-    <div className="card overflow-hidden" role="img" aria-label="A real Iva hunt result in Telegram">
+    <figure className="card overflow-hidden" aria-label="A real Iva hunt result in Telegram">
       <div className="flex items-center gap-3 border-b border-line bg-raised px-4 py-3">
         <div className="grid size-9 place-items-center rounded-full bg-amber-400/20 text-lg" aria-hidden>
           🧺
@@ -201,10 +201,10 @@ function TelegramMock() {
           ))}
         </div>
       </div>
-      <p className="border-t border-line px-4 py-2 text-[11px] text-muted">
+      <figcaption className="border-t border-line px-4 py-2 text-[11px] text-muted">
         A real hunt in Mumbai, 6 Nov 2026. Item lines with product links trimmed.
-      </p>
-    </div>
+      </figcaption>
+    </figure>
   );
 }
 
