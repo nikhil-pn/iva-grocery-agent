@@ -18,7 +18,8 @@ import { user, updateUser, txUsed, markTx, logEvent, recentEvents, totals, recor
 import { txUrl } from './config.mjs';
 import { watchCommand, rememberHunt, startWatchScheduler, WATCH_COMMANDS } from './watch.mjs'; // /watch daily alert
 import { publishDeals, dealsReply } from './arkiv.mjs';
-import { CITIES, cityOf } from './cities.mjs'; // Arkiv: expiring public deal feed
+import { CITIES, cityOf } from './cities.mjs';
+import { zeptoConnected, prepareZeptoOrder, hasPending, confirmZeptoOrder, cancelPending, trackZeptoOrder, friendlyZeptoError } from './zepto/order.mjs'; // Zepto: "order" -> YES -> COD order // Arkiv: expiring public deal feed
 
 const run = promisify(execFile);
 
@@ -58,7 +59,7 @@ Hunts so far: ${u.hunts || 0} · you saved ≈ ₹${u.savedRs || 0}.
 📍 ${cityOf(u)}`;
 }
 
-const SMALL_TALK = /^(hi+|hello+|hey+|yo|ok(ay)?|thanks?|thank you|thx|ty|good (morning|night|evening|afternoon)|hola|namaste|test|start|help|menu|\?)[!. ]*$/i;
+const SMALL_TALK = /^(hi+|hello+|hey+|yo|ok(ay)?|yes|yeah|yep|no|nope|cancel|stop|thanks?|thank you|thx|ty|good (morning|night|evening|afternoon)|hola|namaste|test|start|help|menu|\?)[!. ]*$/i;
 
 async function payPrompt(chatId) {
   const amt = 1;
@@ -97,6 +98,7 @@ ${v.kind === 'wallet' ? '⚡ I\'ll now move it into my 0G compute account myself
 }
 
 let busy = 0;
+const lastItems = new Map(); // chatId -> items of the last hunt (for Zepto ordering)
 
 async function doHunt(chatId, input) {
   const u = user(chatId);
@@ -117,6 +119,8 @@ async function doHunt(chatId, input) {
     await edit(chatId, m.message_id, huntMessage(r));
     if (input.kind === 'text') rememberHunt(chatId, input.text, r, loc); // so a bare /watch can save this list
     publishDeals(r, loc); // Arkiv: fire-and-forget, never throws, never delays the reply
+    lastItems.set(String(chatId), r.items); // Zepto: what "order" will buy
+    if (String(chatId) === cfg.zeptoOwnerChat && zeptoConnected()) await send(chatId, '🛒 Want me to order this on Zepto (cash on delivery)? Reply <b>order</b>.');
     updateUser(chatId, { hunts: (u.hunts || 0) + 1, savedRs: (u.savedRs || 0) + (r.basket.saving || 0) });
     logEvent('hunt', { chat: String(chatId), kind: input.kind, items: r.items.length, tier: r.brain.tier,
       calls: r.receipts.map((x) => x.requestId), cost0G: r.receipts.reduce((a, x) => a + x.cost0G, 0),
@@ -146,6 +150,46 @@ async function voiceToWav(buf) {
   } finally { rmSync(dir, { recursive: true, force: true }); }
 }
 
+const isZeptoOwner = (chatId) => String(chatId) === cfg.zeptoOwnerChat;
+
+async function zeptoOrder(chatId) {
+  if (!isZeptoOwner(chatId)) return send(chatId, '🛒 Ordering on Zepto is in private beta. For now, tap the product links in my reply to order in the app.', KEYBOARD);
+  if (!zeptoConnected()) return send(chatId, 'Zepto isn\'t connected yet.');
+  const items = lastItems.get(String(chatId));
+  if (!items?.length) return send(chatId, 'Send me a list first, then say <b>order</b>.');
+  const m = await send(chatId, '🛒 Filling your Zepto cart… (my 0G brain is picking the products)');
+  try {
+    const o = await prepareZeptoOrder(chatId, items, { addressId: cfg.zeptoAddressId });
+    const lines = o.lines.map((l) => `• ${esc(l.name)} (${esc(l.pack || '')})${l.packs > 1 ? ` ×${l.packs}` : ''}: ₹${Math.round(l.price)}`).join('\n');
+    const miss = o.missing.length ? `\n⚠️ Not on Zepto here: ${esc(o.missing.join(', '))}` : '';
+    const brainLine = o.receipt ? `\n🧠 Products picked by 0G: <code>${esc(o.receipt.requestId)}</code>` : '';
+    await edit(chatId, m.message_id, `🛒 <b>Your Zepto order</b> (cash on delivery)\n${lines}${miss}\n\n<b>Zepto's bill:</b>\n${esc(o.preview).slice(0, 1500)}${brainLine}\n\nReply <b>YES</b> within 3 minutes to place this order, or <b>NO</b> to cancel.`);
+  } catch (e) {
+    console.error('[zepto]', e);
+    await edit(chatId, m.message_id, `😕 Couldn't prepare the Zepto order: ${esc(friendlyZeptoError(e))}`);
+  }
+}
+
+async function zeptoConfirm(chatId) {
+  if (!isZeptoOwner(chatId)) return;
+  const m = await send(chatId, '⏳ Placing your order on Zepto…');
+  try {
+    const o = await confirmZeptoOrder(chatId);
+    await edit(chatId, m.message_id, `✅ <b>Order placed on Zepto</b> (cash on delivery)${o.orderId ? ` · #${esc(o.orderId)}` : ''}\n\n${esc(o.text).slice(0, 1500)}\n\nSend /track for the delivery status.`);
+  } catch (e) {
+    console.error('[zepto]', e);
+    await edit(chatId, m.message_id, `😕 The order did not go through: ${esc(friendlyZeptoError(e))}`);
+  }
+}
+
+async function zeptoTrack(chatId) {
+  if (!isZeptoOwner(chatId) || !zeptoConnected()) return send(chatId, 'Order tracking works for Zepto orders placed through me.', KEYBOARD);
+  try { return send(chatId, `📦 <b>Your latest Zepto order</b>\n${esc(await trackZeptoOrder()).slice(0, 2000)}`); }
+  catch (e) { return send(chatId, `😕 Couldn't fetch the order: ${esc(friendlyZeptoError(e))}`); }
+}
+
+const esc = (x) => String(x ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
 export async function onUpdate(up) {
   const msg = up.message;
   if (!msg || msg.chat.type !== 'private') return;
@@ -167,6 +211,12 @@ export async function onUpdate(up) {
     return doHunt(chatId, { kind: 'voice', b64: await voiceToWav(buf), format: 'wav' });
   }
   if (!text) return;
+
+  // Zepto ordering: "order" -> bill preview -> "YES" -> cash-on-delivery order. Owner-only demo.
+  if (/^\/?(order|buy|buy it|order it|order this|order on zepto)[.! ]*$/i.test(text)) return zeptoOrder(chatId);
+  if (/^(yes|yes order it|confirm|place it|place order)[.! ]*$/i.test(text) && hasPending(chatId)) return zeptoConfirm(chatId);
+  if (/^(no|cancel|stop)[.! ]*$/i.test(text) && hasPending(chatId)) { cancelPending(chatId); return send(chatId, 'OK, nothing ordered.', KEYBOARD); }
+  if (/^\/track$/i.test(text)) return zeptoTrack(chatId);
 
   // Buttons and small talk never cost a hunt.
   if (text === BTN.example) return doHunt(chatId, { kind: 'text', text: EXAMPLE });
