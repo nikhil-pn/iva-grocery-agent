@@ -40,6 +40,37 @@ function toWeiHex(x: string): string {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+const isAddr = (a: unknown): a is string => typeof a === "string" && /^0x[0-9a-fA-F]{40}$/.test(a);
+
+/**
+ * The account to pay from. Some wallets (MetaMask mobile among them) hand back an empty list,
+ * or drop the dapp's account permission when the network changes, so ask again, then fall back
+ * to eth_accounts. Never send a tx without a real from address.
+ */
+async function getAccount(eth: Eip1193, prompt: boolean): Promise<string | null> {
+  for (const method of prompt ? ["eth_requestAccounts", "eth_accounts"] : ["eth_accounts", "eth_requestAccounts"]) {
+    try {
+      const list = (await eth.request({ method })) as unknown;
+      const a = Array.isArray(list) ? list.find(isAddr) : isAddr(list) ? list : null;
+      if (a) return a;
+    } catch (e) {
+      if ((e as { code?: number }).code === 4001) throw e; // the user said no
+    }
+  }
+  return null;
+}
+
+/** Wallet errors, in words a person can act on. */
+function friendly(e: unknown): string {
+  const err = e as { code?: number; message?: string; shortMessage?: string };
+  const m = err.shortMessage || err.message || String(e);
+  if (err.code === 4001 || /user (rejected|denied|cancel)/i.test(m)) return "You cancelled in your wallet. Tap pay to try again.";
+  if (/must provide an ethereum address|not been authorized|no account/i.test(m))
+    return "Your wallet didn't share an account with this page. Unlock it, tap pay again and approve Connect. Still stuck? Use “Or send it yourself”.";
+  if (/insufficient funds/i.test(m)) return "Not enough 0G in this wallet for the payment plus a tiny gas fee.";
+  return m;
+}
+
 async function getReceipt(hash: string, eth?: Eip1193): Promise<{ status: string } | null> {
   // Ask the public 0G RPC first (that's what Iva checks), then the wallet's own provider.
   try {
@@ -105,7 +136,7 @@ export default function PayIva({ compact = false }: { compact?: boolean }) {
     setHash("");
     try {
       setMsg("Connecting wallet…");
-      const [from] = (await eth.request({ method: "eth_requestAccounts" })) as string[];
+      let from = await getAccount(eth, true);
       try {
         await eth.request({ method: "wallet_switchEthereumChain", params: [{ chainId: CHAIN.idHex }] });
       } catch (e) {
@@ -114,6 +145,9 @@ export default function PayIva({ compact = false }: { compact?: boolean }) {
           await eth.request({ method: "wallet_addEthereumChain", params: [CHAIN_PARAMS] });
         } else throw e;
       }
+      // Re-read after the network switch: the account the wallet will actually sign with.
+      from = (await getAccount(eth, false)) ?? from;
+      if (!from) throw new Error("no account");
       // Legacy pricing with an explicit floor: some wallets underprice fees on 0G and the
       // tx is silently dropped. 0G mainnet's minimum is about 4 gwei.
       let gasPrice = (await eth.request({ method: "eth_gasPrice" }).catch(() => null)) as string | null;
@@ -145,9 +179,8 @@ export default function PayIva({ compact = false }: { compact?: boolean }) {
         "Not confirmed after 2 minutes. Some wallets return a hash that never lands. Check the tx link; if it isn't there, use the manual path below.",
       );
     } catch (e) {
-      const err = e as { message?: string; shortMessage?: string };
       setPhase("failed");
-      setMsg(err.shortMessage || err.message || String(e));
+      setMsg(friendly(e));
     }
   }
 
