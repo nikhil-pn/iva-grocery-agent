@@ -76,6 +76,8 @@ own thinking, so she stops being an agent and becomes a script.
 | ⚡ **7 s later Iva signs `depositFor` herself**: 1.6 0G → her 0G compute account | [`0xce31fb72…cbec6`](https://chainscan.0g.ai/tx/0xce31fb72627472c3eb489c47a1597f207c3801ceb541f0e4bd78e20f466cbec6) |
 | 🧠 Inference paid from that balance (go/no-go, `qwen3.7-flash`, 0.000188 0G) | request `253fd0a9-eb8b-46ec-bcd9-2d4ca1018e27` |
 | 🧠 A rich-tier hunt: `glm-5.3`, sealed into a TEE provider (`X-0g-E2ee: sealed`, provider `0xD179…E503`, Intel TDX attested) | requests `15a5ecb3-3c05-4f6e-92c9-1001c73af475`, `5f22cbcf-89ff-403e-8d5e-656787226141` (0.029 0G total) |
+| 💰 A second customer (OKX Wallet) pays 0.2 0G | [`0x58eec124…24bb67`](https://chainscan.0g.ai/tx/0x58eec12440bd324ce894e1c03a159259471838cf1368dfa15ed1650f0524bb67) |
+| ⚡ ~10 s later Iva deposits 0.19 0G into her compute account by herself | [`0x5de7f01a…c48698`](https://chainscan.0g.ai/tx/0x5de7f01ae836e81731268f06638b7c99dfa96d6133e01b5aa3c6b9c671c48698) |
 | 🛑 Spend cap | API key "Iva": `credit_limit 0.5`, `reset_period daily` (read back from `GET /v1/api-keys`) |
 
 Iva's 0G compute account is `0x91ecffc5fcbb3f568173fc5a74045603533d172b`: the pc.0g.ai account whose capped API key
