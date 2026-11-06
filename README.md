@@ -85,6 +85,19 @@ she holds, set to bill in 0G. Her wallet `0xbbd2…918d` earns from customers an
 (`depositFor(0x91ec…)` works for any address). After her first billed call, the 0G Router pulled 0.5 0G from
 the Payment Layer vault into its own ledger by itself, as documented.
 
+## Ordering on Zepto (private beta)
+
+Say **order** after a hunt and Iva buys the basket through **Zepto's official MCP server**:
+1. She searches Zepto at your delivery address, and her **0G brain picks the matching products** (with a request ID).
+2. She fills your Zepto cart and shows **Zepto's own bill**.
+3. She places the order only after you reply **YES**. She uses cash on delivery when Zepto allows it,
+   otherwise Zepto's secure UPI/card payment link, and confirms the payment with Zepto.
+4. `/track` shows the order status.
+
+It was tested for real on 2026-11-07: an order was placed by Iva to the venue and paid through Zepto's link.
+Right now it's owner-only, with a single connected Zepto account. Next: a "Connect Zepto" button for every user.
+Code: `src/zepto/mcp.mjs` (MCP client + "log in with Zepto") and `src/zepto/order.mjs` (cart, bill, YES gate, payment).
+
 ## Where comfy fits
 
 0G recommends **comfy** for this track, but it's one way in, not a requirement. The track says
@@ -177,9 +190,9 @@ Bot commands: `/start` · `/brain` (wallet, balance, tier, receipts) · `/pay` �
 
 ## Safety
 
-- Iva is a **tool-less** agent. She can only hunt prices. She has no shell and no files, and she can't
-  place orders, so a stranger's message can't make her do anything else.
-- **She never buys for you.** Every result links to the exact product in the shop app, and you tap buy.
+- Iva is a **tool-less** agent for strangers. She can only hunt prices. She has no shell and no files.
+  Ordering is owner-only and YES-gated, so a stranger's message can't make her do anything else.
+- **She never buys without your YES.** Every result links to the exact product; ordering on Zepto (beta) shows Zepto's bill first and needs an explicit YES for every order.
 - Her wallet is a small hot wallet. Spending is capped by 0G on the API key and by Iva herself per day.
 - Shop data is read the way a browser reads it, at a polite rate, with results cached for 20 minutes.
 
