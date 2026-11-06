@@ -6,6 +6,7 @@ import LiveStats, { LiveStatsSkeleton } from "./components/LiveStats";
 import Loop from "./components/Loop";
 import PayIva from "./components/PayIva";
 import CopyButton from "./components/CopyButton";
+import receipts from "@/public/receipts.json";
 import { ArkivSticker, PriceLabel, ZeptoSticker, ZeroGSticker } from "./components/Stickers";
 import {
   ARKIV,
@@ -65,8 +66,9 @@ function Header() {
   return (
     <header className="fixed inset-x-0 top-0 z-30">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-        <a href="#top" className="serif-i text-3xl text-lime">
-          iva
+        <a href="#top" className="flex items-center gap-2.5">
+          <img src="/brand/iva-mark-96.png" alt="" className="size-9 rounded-xl" />
+          <span className="serif-i text-3xl text-lime">iva</span>
         </a>
         <nav className="flex items-center gap-1 rounded-full bg-bg/70 p-1 text-sm backdrop-blur-md">
           {[
@@ -139,7 +141,8 @@ function Hero() {
             on 0G out of the fees she earns, posts every deal to Arkiv, and can order it for you on Zepto.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <a href={BOT_URL} {...ext} className="tap rounded-full bg-lime px-6 py-3.5 font-semibold text-ink">
+            <a href={BOT_URL} {...ext} className="tap flex items-center gap-2.5 rounded-full bg-lime py-2 pl-2 pr-6 font-semibold text-ink">
+              <img src="/brand/iva-mark-96.png" alt="" className="size-9 rounded-full" />
               Open @{BOT_USERNAME}
             </a>
             <a href="#pay" className="tap rounded-full border border-fg/25 px-6 py-3.5 font-semibold">
@@ -211,7 +214,7 @@ function Receipt() {
           {c.requestId}
         </p>
       ))}
-      <p aria-hidden className="mt-4 text-center text-3xl leading-none tracking-[-0.12em] text-ink/80">
+      <p aria-hidden className="mt-4 overflow-hidden whitespace-nowrap text-center text-3xl leading-none tracking-[-0.12em] text-ink/80">
         ||| || ||| | |||| || |||
       </p>
       <figcaption className="mt-1 text-center text-[10.5px] text-ink/55">a real hunt · thank you for shopping</figcaption>
@@ -244,6 +247,61 @@ function How() {
           </li>
         </ol>
         <Receipt />
+      </div>
+    </Section>
+  );
+}
+
+function Behind() {
+  const r = receipts as { summary: Record<string, number> };
+  const steps: [string, string, string][] = [
+    ["Telegram", "Your list arrives", "Text, a photo of a note, or a voice note."],
+    ["0G mainnet", "Iva checks her own money", "Her wallet and her 0G compute balance, then she picks the best brain she can afford."],
+    ["0G", "She reads the list", "A 0G model turns it into items and quantities. Photos use vision, voice notes use audio."],
+    ["Shops", "Three shops, at your address", "Headless Chrome opens Blinkit, Instamart and Zepto and reads each shop's own search results."],
+    ["Iva", "Every product normalised", "Price, MRP, pack size, ₹/kg, ₹/piece, stock and a link, in one shape."],
+    ["0G · TEE", "Same product, across shops", "A sealed model picks real matches: butter, not butter cookies. Each call has a request ID."],
+    ["Iva", "Pack maths and the basket", "Cheapest single app, cheapest split, and the ₹ you save."],
+    ["Arkiv", "Deals published", "The winning prices go to Arkiv in one transaction, each set to expire in 6 h."],
+    ["Telegram · Zepto", "Answer, then order", "The basket with links. Say “order” and Zepto's official MCP takes over, behind your YES."],
+  ];
+  return (
+    <Section
+      id="behind"
+      i="behind"
+      rest="one hunt."
+      lead="About 30 seconds from list to basket. This is everything that happens in between, and every step is real."
+    >
+      <ol className="grid gap-px overflow-hidden rounded-3xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
+        {steps.map(([sys, t, d], n) => (
+          <li key={t} className="bg-bg p-6">
+            <p className="flex items-center justify-between">
+              <span className="serif-i text-3xl leading-none text-lime">{n + 1}</span>
+              <span className="rounded-full border border-line px-2.5 py-0.5 font-mono text-[11px] text-muted">{sys}</span>
+            </p>
+            <p className="mt-4 font-semibold">{t}</p>
+            <p className="mt-1 text-sm text-muted">{d}</p>
+          </li>
+        ))}
+      </ol>
+      <div className="mt-6 rounded-3xl bg-basket p-6 md:flex md:items-center md:justify-between md:gap-8">
+        <p className="max-w-md text-fg/80">
+          <span className="font-semibold text-fg">And always, in the background:</span> every 30 s her treasury loop
+          watches her wallet, verifies new payments onchain and tops up her 0G compute with depositFor().
+        </p>
+        <dl className="mt-6 grid grid-cols-2 gap-x-8 gap-y-4 md:mt-0 md:grid-cols-4">
+          {[
+            [String(r.summary.inferences), "paid 0G calls"],
+            [String(r.summary.sealedInferences), "sealed in a TEE"],
+            [`${r.summary.income0G} 0G`, "earned"],
+            [`${Number(r.summary.deposited0G).toFixed(2)} 0G`, "self-deposited"],
+          ].map(([v, l]) => (
+            <div key={l}>
+              <dd className="text-3xl font-medium tracking-tight tabular-nums text-lime">{v}</dd>
+              <dt className="text-xs text-fg/60">{l}</dt>
+            </div>
+          ))}
+        </dl>
       </div>
     </Section>
   );
@@ -292,6 +350,39 @@ function DealsSection() {
         </>
       }
     >
+      <div className="mb-10 grid grid-cols-1 gap-4 md:grid-cols-3 [&>*]:min-w-0">
+        <div className="card p-6">
+          <span className="serif-i text-3xl text-lime">1</span>
+          <p className="mt-3 font-semibold">A hunt finds a price</p>
+          <p className="mt-1 text-sm text-muted">Say Zepto has 12 eggs for ₹106 in Mumbai, cheaper than Instamart and Blinkit.</p>
+        </div>
+        <div className="card p-6">
+          <span className="serif-i text-3xl text-lime">2</span>
+          <p className="mt-3 font-semibold">Iva writes it to Arkiv</p>
+          <div className="mt-3 rounded-xl bg-ink p-3 font-mono text-[11.5px] leading-5 text-fg/80">
+            <p>
+              <span className="text-lime">item</span> egg · <span className="text-lime">shop</span> zepto
+            </p>
+            <p>
+              <span className="text-lime">price</span> 106 · <span className="text-lime">city</span> mumbai
+            </p>
+            <p>
+              <span className="text-lime">owner</span> {short(IVA_WALLET)}
+            </p>
+            <p>
+              <span className="text-lime">expires</span> in {ARKIV.dealHours} h
+            </p>
+          </div>
+        </div>
+        <div className="card p-6">
+          <span className="serif-i text-3xl text-lime">3</span>
+          <p className="mt-3 font-semibold">Anyone reads it, then it&apos;s gone</p>
+          <p className="mt-1 text-sm text-muted">
+            The bot&apos;s /deals and this page query it by city. After {ARKIV.dealHours} h Arkiv deletes it by itself, so
+            you never see a stale price. No database, no cleanup job.
+          </p>
+        </div>
+      </div>
       <Suspense fallback={<LiveDealsSkeleton />}>
         <LiveDeals />
       </Suspense>
@@ -546,6 +637,7 @@ export default function Home() {
       <main>
         <Hero />
         <How />
+        <Behind />
         <LoopSection />
         <DealsSection />
         <Order />
