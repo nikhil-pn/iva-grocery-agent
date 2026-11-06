@@ -13,7 +13,7 @@ import { huntMessage, brainMessage } from './format.mjs';
 import { brainState, TIER_BADGE } from './brain.mjs';
 import { verifyPayment, ivaAddress } from './chain.mjs';
 import { startTreasury, treasuryTick } from './treasury.mjs';
-import { user, updateUser, txUsed, markTx, logEvent, recentEvents, totals } from './ledger.mjs';
+import { user, updateUser, txUsed, markTx, logEvent, recentEvents, totals, recordIncome } from './ledger.mjs';
 import { txUrl } from './config.mjs';
 
 const run = promisify(execFile);
@@ -68,6 +68,7 @@ async function claimPayment(chatId, hash) {
   const hunts = Math.floor(v.amount0G / cfg.huntFee + 1e-9);
   const u = user(chatId);
   updateUser(chatId, { credits: u.credits + hunts, paid0G: (u.paid0G || 0) + v.amount0G });
+  recordIncome({ tx: hash, from: v.from, amount0G: v.amount0G, via: 'claimed in chat' });
   logEvent('payment', { tx: hash, amount0G: v.amount0G, from: v.from, chat: String(chatId), kind: v.kind, hunts });
   await edit(chatId, m.message_id, `✅ Got <b>${fmt0G(v.amount0G)}</b> — <a href="${txUrl(hash)}">tx</a>
 +${hunts} hunts (you have ${user(chatId).credits}).

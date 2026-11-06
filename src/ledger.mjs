@@ -9,7 +9,7 @@ import { cfg } from './config.mjs';
 const STATE = join(cfg.dataDir, 'state.json');
 const EVENTS = join(cfg.dataDir, 'events.jsonl');
 
-const fresh = () => ({ users: {}, usedTxs: {}, spend: { day: '', neuron: '0' } });
+const fresh = () => ({ users: {}, usedTxs: {}, income: {}, spend: { day: '', neuron: '0' } });
 let state = existsSync(STATE) ? { ...fresh(), ...JSON.parse(readFileSync(STATE, 'utf8')) } : fresh();
 
 function save() {
@@ -23,6 +23,16 @@ export function user(chatId) {
   return state.users[k];
 }
 export function updateUser(chatId, patch) { Object.assign(user(chatId), patch); save(); }
+
+/** Record money in exactly once per tx, whether the payer claimed it in chat or not. */
+export function recordIncome({ tx, from, amount0G, via }) {
+  state.income ||= {};
+  const k = tx.toLowerCase();
+  if (state.income[k]) return null;
+  state.income[k] = { from, amount0G };
+  save();
+  return logEvent('income', { tx, from, amount0G, via });
+}
 
 export function txUsed(hash) { return !!state.usedTxs[hash.toLowerCase()]; }
 export function markTx(hash, chatId) { state.usedTxs[hash.toLowerCase()] = String(chatId); save(); }
@@ -58,7 +68,7 @@ export function totals() {
   for (const l of readFileSync(EVENTS, 'utf8').split('\n')) {
     if (!l) continue;
     const e = JSON.parse(l);
-    if (e.type === 'payment') t.earned += e.amount0G;
+    if (e.type === 'income') t.earned += e.amount0G;
     if (e.type === 'deposit') t.deposited += e.amount0G;
     if (e.type === 'dividend') t.dividends += e.amount0G;
     if (e.type === 'inference') { t.inferences++; t.spent += e.cost0G || 0; }

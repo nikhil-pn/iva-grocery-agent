@@ -84,6 +84,14 @@ export function walk(node, fn) {
   for (const k in node) walk(node[k], fn);
 }
 
+/** Throw away a shop's context for a location (fresh cookies/session next time). */
+export async function resetContext(shop, lat, lng) {
+  const key = `${shop}:${lat.toFixed(4)},${lng.toFixed(4)}`;
+  const ctx = contexts.get(key);
+  contexts.delete(key);
+  if (ctx) await ctx.close().catch(() => {});
+}
+
 export async function closeAll() {
   const b = await browserP;
   if (b) await b.close().catch(() => {});

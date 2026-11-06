@@ -48,13 +48,16 @@ export async function chat({ model, messages, maxTokens = 700, json = false, pur
     requestId: trace.request_id || res.headers.get('x-request-id') || clientId,
     cost0G: toOG(costNeuron),
     model: j.model || model,
-    teeVerified: trace.tee_verified,
-    provider: trace.provider || trace.provider_identity,
+    // 0G marks calls that ran end-to-end encrypted into a TEE provider as "sealed"
+    sealed: res.headers.get('x-0g-e2ee') === 'sealed',
+    teeVerified: trace.tee_verified ?? null,
+    zgResKey: res.headers.get('zg-res-key'),
+    provider: trace.provider || trace.provider_identity || res.headers.get('x-provider'),
     usage: j.usage,
   };
   addSpend(costNeuron);
   logEvent('inference', { requestId: out.requestId, model: out.model, tier, purpose, cost0G: out.cost0G,
-    teeVerified: out.teeVerified ?? null, tokensIn: j.usage?.prompt_tokens, tokensOut: j.usage?.completion_tokens });
+    sealed: out.sealed, teeVerified: out.teeVerified, provider: out.provider, zgResKey: out.zgResKey, tokensIn: j.usage?.prompt_tokens, tokensOut: j.usage?.completion_tokens });
   return out;
 }
 

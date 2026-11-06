@@ -4,9 +4,9 @@
 //  2. deposits into her OWN 0G compute account when it's below target (depositFor),
 //  3. once compute is full, sends surplus above a ceiling to her creator (dividend).
 import { cfg } from './config.mjs';
-import { walletBalance0G, depositToCompute, sendNative } from './chain.mjs';
+import { walletBalance0G, depositToCompute, sendNative, incomingPayments } from './chain.mjs';
 import { funds } from './zg/account.mjs';
-import { logEvent } from './ledger.mjs';
+import { logEvent, recordIncome } from './ledger.mjs';
 import { invalidate } from './brain.mjs';
 
 let running = false;
@@ -15,6 +15,9 @@ export async function treasuryTick(reason = 'tick') {
   if (running) return null;
   running = true;
   try {
+    try {
+      for (const p of await incomingPayments()) recordIncome({ ...p, via: 'chain watcher' });
+    } catch (e) { console.error('[treasury] income scan', e.message); }
     const wallet = await walletBalance0G();
     const f = await funds();
     const compute = f.spendable;

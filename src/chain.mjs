@@ -73,3 +73,13 @@ export async function verifyPayment(hash) {
   }
   return { ok: false, reason: 'that payment was not sent to Iva' };
 }
+
+/** Incoming payments to Iva's wallet, from the 0G explorer API (newest first). */
+export async function incomingPayments() {
+  const url = `${cfg.explorer}/open/api?module=account&action=txlist&address=${ivaAddress}&sort=desc`;
+  const r = await fetch(url, { signal: AbortSignal.timeout(15000) });
+  const j = await r.json();
+  return (j.result || []).filter((t) => t.to?.toLowerCase() === ivaAddress.toLowerCase()
+    && t.isError === '0' && BigInt(t.value) > 0n)
+    .map((t) => ({ tx: t.hash, from: t.from, amount0G: Number(formatEther(BigInt(t.value))), at: Number(t.timestamp) }));
+}

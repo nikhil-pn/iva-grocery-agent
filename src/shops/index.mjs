@@ -7,7 +7,21 @@ export const SHOPS = [blinkit, instamart, zepto];
 const cache = new Map();
 const TTL = 20 * 60 * 1000;
 
+// One search at a time per shop: parallel searches from the same browser session
+// make some shops return empty results. Different shops still run in parallel.
+const queues = new Map();
+function serial(shopId, fn) {
+  const prev = queues.get(shopId) || Promise.resolve();
+  const next = prev.then(fn, fn);
+  queues.set(shopId, next.catch(() => {}));
+  return next;
+}
+
 export async function searchShop(shop, query, loc) {
+  return serial(shop.id, () => searchShopNow(shop, query, loc));
+}
+
+async function searchShopNow(shop, query, loc) {
   const key = `${shop.id}|${query.toLowerCase()}|${loc.lat.toFixed(3)},${loc.lng.toFixed(3)}`;
   const hit = cache.get(key);
   if (hit && Date.now() - hit.at < TTL) return hit.items;
@@ -16,6 +30,7 @@ export async function searchShop(shop, query, loc) {
     try { items = await shop.search(query, loc); } catch (e) { console.error(`[${shop.id}] ${e.message}`); }
   }
   if (items.length) cache.set(key, { at: Date.now(), items });
+  else console.error(`[${shop.id}] no results for "${query}"`);
   return items;
 }
 
