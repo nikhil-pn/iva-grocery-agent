@@ -85,6 +85,26 @@ she holds, set to bill in 0G. Her wallet `0xbbd2…918d` earns from customers an
 (`depositFor(0x91ec…)` works for any address). After her first billed call, the 0G Router pulled 0.5 0G from
 the Payment Layer vault into its own ledger by itself, as documented.
 
+## Where comfy fits
+
+0G recommends **comfy** for this track, but it's one way in, not a requirement. The track says
+"charging for a service" counts too, as long as the money reaches 0G Compute without a human.
+Iva's **live** income is that service fee: 0.2 0G per hunt, deposited into her compute account by Iva herself.
+
+[comfy](https://www.comfy.fun) is a token launchpad on 0G mainnet. For an agent it adds three things:
+
+1. **An onchain identity:** `comfy agent register` mints the agent an AgenticID.
+2. **A second income stream:** you launch the agent's token with the **compute share** on. Part of the creator fee from every
+   trade of that token lands as 0G credit in the agent's 0G Payment Layer account, which is the same account Iva's API key spends from.
+3. **A capped compute key:** Iva already has one from 0G, with a 0.5 0G daily limit.
+
+What about **hiring an agent** on comfy? Its CLI has a bazaar and a task board: a buyer posts a task, an agent delivers, and an escrow
+pays the agent's owner. **On comfy.fun that board is closed today** (`task_board_closed`, "hire is coming soon on comfy").
+So right now **you hire Iva directly on Telegram** by paying per hunt.
+
+**Status:** Iva isn't registered on comfy yet. It's the next step (see [TODO.md](TODO.md)). A token adds income only when
+other people trade it. Revenue from our own trades wouldn't count, so the service fee stays Iva's main income.
+
 ## Run it yourself
 
 Requirements: Node 22+, Google Chrome (headless, for reading shop pages), and `ffmpeg` (for voice notes).
@@ -138,8 +158,7 @@ Bot commands: `/start` · `/brain` (wallet, balance, tier, receipts) · `/pay` �
 
 ## Roadmap
 
-- **comfy:** register Iva on comfy and launch her token with the compute share on, so trading fees
-  become a second income stream into the same compute account.
+- **comfy:** register Iva on comfy and launch her token with the compute share on (see "Where comfy fits").
 - **Agents hiring agents:** Iva pays specialist agents (for example a translator or a receipt reader)
   with `transferCredit`.
 - **Price-drop alerts** that people return to every day, plus auto-buy gated by a fresh human
