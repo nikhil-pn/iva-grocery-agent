@@ -75,6 +75,16 @@ The read needs no key and no wallet, so a fresh clone can run it:
 node scripts/arkiv-query.mjs eggs            # Mumbai by default; --city pune, --at lat,lng, --json
 ```
 
+## Every Arkiv feature changes something users see
+
+| Arkiv feature | What users see |
+|---|---|
+| **Expiry** (6 h per deal) | "⏳ expires in 3h 27m" on every deal, and an old price never shows up. 6 h fits the data: in 15 days of tracking these shops, a 15%+ discount lasted about 5 h (median). |
+| **Owner wallet** (`$owner` = Iva) | Only deals Iva signed are shown, so nobody can slip fake prices into `/deals` or the website. Only Iva can write or edit her deals. |
+| **Attribute filters** (city, item, ₹/unit) | `/deals eggs` shows eggs near you, cheapest first. That's how people actually search for groceries. |
+| **Batched writes** (12 per tx) | The hunt answer is never slowed down. The deals publish after the user already has their basket. |
+| **Public reads** (no key) | The website, the bot and anyone's script show the same live board. |
+
 ## Code pointers
 
 | What | Where |

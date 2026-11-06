@@ -36,3 +36,16 @@ can publish the same schema under their own wallets, and readers decide whom to 
   queried through an indexer we'd have to build. A permanent record is wrong for data that
   goes stale in hours.
 - *IPFS/0G Storage blobs:* there's no query by attribute and no expiry.
+
+## What we kept off Arkiv, and why
+
+Only the **winning prices** go on Arkiv: item, shop, ₹, pack, ₹/unit, city, a ~5 km cell, the time seen and the product link.
+Everything else stays off, on purpose:
+
+| Kept off Arkiv | Where it lives | Why |
+|---|---|---|
+| Who asked: Telegram IDs, names, chats | Iva's private user file | Personal. A public, queryable feed must not say who searched for what. |
+| Exact locations | Never stored on Arkiv | Deals carry only the city and a ~5 km cell, enough for "near you" and no more. |
+| Payments, hunt credits, refunds | 0G mainnet (the money itself) + Iva's own books | Money is permanent and belongs on the chain that pays for her compute. Deals are temporary. |
+| 0G receipts (request IDs, costs) | Iva's append-only receipt log, exported to the website | It's her audit trail. It should never expire. |
+| Zepto logins and orders | A private token file on Iva's server (owner-only permissions, never in the repo) | Secret and personal. |

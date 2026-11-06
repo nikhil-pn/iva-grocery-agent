@@ -8,6 +8,13 @@ The feed is public. Reading it needs:
 There is no API key from us, no account and no Iva server in between. Every hunt any user runs
 adds live prices to it.
 
+## Who it's for, and can they try it today?
+
+Yes, today, with no sign-up:
+- **Shoppers in Indian metros** who buy on Blinkit, Instamart and Zepto: message [@IvaGroceryAgentbot](https://t.me/IvaGroceryAgentbot) and send `/deals`.
+- **Anyone on the web:** the live board at [iva-grocery-agent.vercel.app/#deals](https://iva-grocery-agent.vercel.app/#deals).
+- **Developers and agents:** `node scripts/arkiv-query.mjs eggs --json`.
+
 ## Today
 
 - **Iva's own users:** `/deals` and `/deals <item>` in Telegram show what Iva found nearby in the
