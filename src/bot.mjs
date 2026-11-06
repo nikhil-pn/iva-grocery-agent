@@ -13,6 +13,7 @@ import { huntMessage, brainMessage } from './format.mjs';
 import { brainState, TIER_BADGE } from './brain.mjs';
 import { verifyPayment, ivaAddress } from './chain.mjs';
 import { startTreasury, treasuryTick } from './treasury.mjs';
+import { closeAll } from './shops/browser.mjs';
 import { user, updateUser, txUsed, markTx, logEvent, recentEvents, totals, recordIncome } from './ledger.mjs';
 import { txUrl } from './config.mjs';
 
@@ -200,6 +201,14 @@ async function main() {
   console.log(`Iva up as @${me.username} · wallet ${ivaAddress}`);
   startTreasury((ev) => console.log('[treasury]', ev.type, ev.amount0G, ev.tx));
   await poll(onUpdate);
+}
+
+for (const sig of ['SIGTERM', 'SIGINT']) {
+  process.on(sig, async () => {
+    setTimeout(() => process.exit(0), 3000).unref();
+    await closeAll().catch(() => {});
+    process.exit(0);
+  });
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });
