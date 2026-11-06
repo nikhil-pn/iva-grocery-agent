@@ -63,12 +63,13 @@ export function recentEvents(type, n = 5) {
   return out;
 }
 export function totals() {
-  const t = { earned: 0, deposited: 0, dividends: 0, inferences: 0, spent: 0, hunts: 0 };
+  const t = { earned: 0, refunded: 0, deposited: 0, dividends: 0, inferences: 0, spent: 0, hunts: 0 };
   if (!existsSync(EVENTS)) return t;
   for (const l of readFileSync(EVENTS, 'utf8').split('\n')) {
     if (!l) continue;
     const e = JSON.parse(l);
     if (e.type === 'income') t.earned += e.amount0G;
+    if (e.type === 'refund') t.refunded += e.amount0G;
     if (e.type === 'deposit') t.deposited += e.amount0G;
     if (e.type === 'dividend') t.dividends += e.amount0G;
     if (e.type === 'inference') { t.inferences++; t.spent += e.cost0G || 0; }
