@@ -194,3 +194,9 @@ details[open] .chev {
     display: none;
   }
 }
+
+/* Die-cut white outline around a transparent PNG. */
+.dog-sticker {
+  filter: drop-shadow(4px 0 0 #fff) drop-shadow(-4px 0 0 #fff) drop-shadow(0 4px 0 #fff) drop-shadow(0 -4px 0 #fff)
+    drop-shadow(0 18px 24px rgba(0, 0, 0, 0.45));
+}

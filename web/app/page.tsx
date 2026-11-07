@@ -72,6 +72,7 @@ function Header() {
         </a>
         <nav className="flex items-center gap-1 rounded-full bg-bg/70 p-1 text-sm backdrop-blur-md">
           {[
+            ["#demo", "Demo"],
             ["#loop", "Loop"],
             ["#deals", "Deals"],
             ["#stack", "Stack"],
@@ -219,6 +220,24 @@ function Receipt() {
       </p>
       <figcaption className="mt-1 text-center text-[10.5px] text-ink/55">a real hunt · thank you for shopping</figcaption>
     </figure>
+  );
+}
+
+function Demo() {
+  return (
+    <section id="demo" className="mx-auto w-full max-w-6xl px-5 pt-16 md:pt-24">
+      <p className="serif-i text-3xl text-lime">watch it work, in under 3 minutes</p>
+      <video
+        className="mt-5 w-full rounded-[1.75rem] border border-line bg-ink"
+        controls
+        playsInline
+        preload="metadata"
+        poster="/video/iva-demo-poster.jpg"
+      >
+        <source src="/video/iva-demo.mp4" type="video/mp4" />
+        <track kind="captions" src="/video/iva-demo.en.vtt" srcLang="en" label="English" default />
+      </video>
+    </section>
   );
 }
 
@@ -650,6 +669,55 @@ function Proof() {
   );
 }
 
+const TEAM = [
+  { role: "Supreme leader", handle: "NikhilEth", img: "/team/nikhil.jpg", line: "Built the entire product. sad life 🥲", rot: "-rotate-3" },
+  { role: "Halal baddy", handle: "Sherhin55", img: "/team/sherhin.jpg", line: "talk talk, laugh and again talk", rot: "rotate-2" },
+  { role: "Degen", handle: "0xnandhu", img: "/team/nandhu.jpg", line: "sleep sleep, snore and again sleep", rot: "-rotate-2" },
+];
+
+function Team() {
+  return (
+    <section id="team" className="relative overflow-hidden border-t border-line">
+      {/* the dog: our unofficial fourth team member */}
+      <img
+        src="/team/dog.png"
+        alt=""
+        aria-hidden
+        className="dog-sticker pointer-events-none absolute -bottom-6 -left-10 w-56 -rotate-6 opacity-95 md:-left-4 md:bottom-auto md:top-10 md:w-80"
+      />
+      <div className="relative mx-auto w-full max-w-6xl px-5 py-20 md:py-28 md:pl-72">
+        <h2 className="display text-[3rem] text-lime md:text-[4.5rem]">
+          <span className="serif-i">the</span> team that built it.
+        </h2>
+        <p className="mt-4 max-w-xl text-lg text-muted">Three humans and one very confident dog.</p>
+        <ul className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-3">
+          {TEAM.map((m) => (
+            <li key={m.handle}>
+              <a
+                href={`https://x.com/${m.handle}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`card tap block p-6 transition-transform hover:rotate-0 hover:scale-[1.02] ${m.rot}`}
+              >
+                <img src={m.img} alt={`@${m.handle}`} className="size-24 rounded-full border-4 border-white object-cover shadow-xl" />
+                <p className="serif-i mt-5 text-3xl text-lime">{m.role}</p>
+                <p className="mt-1 font-mono text-sm text-fg/80">@{m.handle}</p>
+                <p className="mt-3 text-muted">{m.line}</p>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <a
+          href="/judges"
+          className="tap mt-10 inline-flex items-center gap-2 rounded-full border-2 border-dashed border-lime px-6 py-3 font-semibold text-lime hover:bg-lime hover:text-ink"
+        >
+          🐾 a small message for the judges →
+        </a>
+      </div>
+    </section>
+  );
+}
+
 function Footer() {
   const links: [string, string][] = [
     ["GitHub", REPO_URL],
@@ -700,6 +768,7 @@ export default function Home() {
       <Header />
       <main>
         <Hero />
+        <Demo />
         <How />
         <Behind />
         <LoopSection />
@@ -716,6 +785,7 @@ export default function Home() {
         </Section>
         <Start />
         <Proof />
+        <Team />
       </main>
       <Footer />
     </>
