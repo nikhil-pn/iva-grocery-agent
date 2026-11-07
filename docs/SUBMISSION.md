@@ -44,7 +44,7 @@ All payments, deposits and inference request IDs are logged and listed in the RE
   [first publish tx](https://rabdi.explorer.arkiv.network/tx/0x89f91c6c19c3b055bf37c3f215c57a5492aa28a4d544b00e5bcc551737bd7c56) ·
   [live on the site](https://iva-grocery-agent.vercel.app/#deals). Docs in `arkiv/`.
 
-**Links:** demo video https://youtu.be/hyXaMCNXJ8s · repo https://github.com/nikhil-pn/iva-grocery-agent · bot https://t.me/IvaGroceryAgentbot · site https://iva-grocery-agent.vercel.app · how it works + pitch https://iva-grocery-agent.vercel.app/how-it-works
+**Links:** demo video https://youtu.be/h34HixEbvUA · repo https://github.com/nikhil-pn/iva-grocery-agent · bot https://t.me/IvaGroceryAgentbot · site https://iva-grocery-agent.vercel.app · how it works + pitch https://iva-grocery-agent.vercel.app/how-it-works
 
 **Contracts:** none deployed. Iva uses the 0G Payment Layer `0xA3b15Bd2aD18BFB6b5f92D8AA9F444Dd59d1cE32`.
 Agent wallet `0xbbd2beC1DFd26272c171d174BeEb4eE0488b918d`.

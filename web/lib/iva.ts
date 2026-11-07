@@ -24,7 +24,7 @@ export const BOT_URL = `https://t.me/${BOT_USERNAME}`;
 export const REPO_URL = "https://github.com/nikhil-pn/iva-grocery-agent";
 
 /** The demo video on YouTube (falls back to the copy on this site). */
-export const DEMO_URL = "https://youtu.be/hyXaMCNXJ8s";
+export const DEMO_URL = "https://youtu.be/h34HixEbvUA";
 
 export const HUNT_FEE_0G = 0.2;
 export const DAILY_CAP_0G = 2;

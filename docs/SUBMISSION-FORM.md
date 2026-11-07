@@ -40,7 +40,7 @@ Node.js agent running as a service, plus a Next.js 16 website on Vercel.
 ## Links
 - GitHub: https://github.com/nikhil-pn/iva-grocery-agent
 - Live demo: https://iva-grocery-agent.vercel.app (bot: https://t.me/IvaGroceryAgentbot)
-- Demo video (2:57): https://youtu.be/hyXaMCNXJ8s (upload the same file if the form wants a file)
+- Demo video (2:57): https://youtu.be/h34HixEbvUA (upload the same file if the form wants a file)
 
 ## Tech stack
 - Ethereum developer tools: viem
