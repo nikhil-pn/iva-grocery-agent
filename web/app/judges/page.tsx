@@ -15,13 +15,19 @@ export default function Judges() {
           ← back to <span className="serif-i text-lg text-lime">iva</span>
         </a>
 
-        <div className="mt-8 grid grid-cols-1 items-center gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] [&>*]:min-w-0">
+        {/* the judges' names, very big */}
+        <h2 className="display mt-8 text-center text-[19vw] leading-[0.85] text-lime md:text-[11rem]">
+          <span className="serif-i">Gathin</span>
+          <span className="block text-[0.45em] text-fg">&amp;</span>
+          Udhay
+        </h2>
+
+        <div className="mt-12 grid grid-cols-1 items-center gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] [&>*]:min-w-0">
           {/* the dog, full size */}
           <img src="/team/dog-broke.png" alt="A sad dog holding an empty wallet" className="dog-sticker mx-auto w-full max-w-md -rotate-3" />
 
           <div>
-            <p className="serif-i text-4xl text-lime md:text-5xl">dear judges,</p>
-            <h1 className="display mt-4 text-[2.6rem] text-fg md:text-[4rem]">
+            <h1 className="display text-[2.6rem] text-fg md:text-[4rem]">
               We are very poor. We don&apos;t have money to book return tickets, so please give us the{" "}
               <span className="text-lime">$1,000 bounty track.</span>
             </h1>

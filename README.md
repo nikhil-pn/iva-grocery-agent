@@ -1,5 +1,7 @@
 # 🧺 Iva: the grocery agent that pays for her own brain
 
+**▶ Demo video (2:57):** https://youtu.be/hyXaMCNXJ8s · **How it works + pitch:** https://iva-grocery-agent.vercel.app/how-it-works
+
 > Most AI agents die the day their owner stops paying the API bill.
 > **Iva pays her own bill, out of the money she saves you.**
 

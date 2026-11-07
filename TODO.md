@@ -30,3 +30,10 @@ domain and headers, server-side helpers. It also gives Iva a real landing page.
 
 ## Later
 - comfy: register Iva and launch her token with the compute share on (a second income stream into the same compute account).
+
+## After submission (owner, in this order; not now)
+1. [ ] **Voiceover** for the demo video: read the captions in `docs/DEMO-VIDEO.md` (they're written to be spoken), record, and mux it in.
+2. [ ] **Buy a banana:** send Iva "1 banana", then say **order** and reply **YES** (Zepto, real money).
+3. [ ] **Take a picture** of the delivered banana.
+4. [ ] **Add it to the website and the video** (a "real order, delivered" shot), re-render, and re-upload to YouTube.
+5. [ ] Rotate Iva's wallet key, the bot token and the 0G keys (both were shown in screenshots/chat).

@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import hero from "@/public/img/hero.jpg";
 import LiveDeals, { LiveDealsSkeleton } from "./components/LiveDeals";
 import LiveStats, { LiveStatsSkeleton } from "./components/LiveStats";
@@ -15,6 +16,7 @@ import {
   CHAIN,
   COMPUTE_ACCOUNT,
   DAILY_CAP_0G,
+  DEMO_URL,
   HUNT_FEE_0G,
   IVA_WALLET,
   LINKS,
@@ -72,7 +74,7 @@ function Header() {
         </a>
         <nav className="flex items-center gap-1 rounded-full bg-bg/70 p-1 text-sm backdrop-blur-md">
           {[
-            ["#demo", "Demo"],
+            ["/how-it-works", "How it works"],
             ["#loop", "Loop"],
             ["#deals", "Deals"],
             ["#stack", "Stack"],
@@ -145,6 +147,14 @@ function Hero() {
             <a href={BOT_URL} {...ext} className="tap flex items-center gap-2.5 rounded-full bg-lime py-2 pl-2 pr-6 font-semibold text-ink">
               <img src="/brand/iva-mark-96.png" alt="" className="size-9 rounded-full" />
               Open @{BOT_USERNAME}
+            </a>
+            <a
+              href={DEMO_URL}
+              {...(DEMO_URL.startsWith("http") ? ext : {})}
+              className="tap flex items-center gap-2 rounded-full border border-fg/25 px-6 py-3.5 font-semibold hover:border-lime hover:text-lime"
+            >
+              <span aria-hidden className="grid size-6 place-items-center rounded-full bg-lime text-[11px] text-ink">▶</span>
+              See demo
             </a>
             <a href="#pay" className="tap rounded-full border border-fg/25 px-6 py-3.5 font-semibold">
               Pay {HUNT_FEE_0G} 0G
@@ -707,12 +717,12 @@ function Team() {
             </li>
           ))}
         </ul>
-        <a
+        <Link
           href="/judges"
           className="tap mt-10 inline-flex items-center gap-2 rounded-full border-2 border-dashed border-lime px-6 py-3 font-semibold text-lime hover:bg-lime hover:text-ink"
         >
           🐾 a small message for the judges →
-        </a>
+        </Link>
       </div>
     </section>
   );
@@ -720,6 +730,7 @@ function Team() {
 
 function Footer() {
   const links: [string, string][] = [
+    ["How it works", "/how-it-works"],
     ["GitHub", REPO_URL],
     [`@${BOT_USERNAME}`, BOT_URL],
     ["0G", LINKS.zeroG],
