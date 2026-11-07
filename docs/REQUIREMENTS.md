@@ -8,7 +8,7 @@
 | Credit lands in the agent's 0G compute account | ✅ | Iva's own `depositFor` txs `0xce31fb72…`, `0x5de7f01a…` |
 | Inference paid from that balance, with request IDs | ✅ | every reply and `/brain` list `x_0g_trace.request_id` + cost |
 | Agent runs on its own, no manual top-up | ✅ | systemd service; treasury loop deposits within seconds of a payment |
-| Spend cap | ✅ | API key `credit_limit 0.5` / `daily` (0G-enforced) + Iva's own daily cap |
+| Spend cap | ✅ | API key `credit_limit 2` / `daily` (0G-enforced) + Iva's own daily cap |
 | Degrades gracefully when funds run low | ✅ | rich → lean (cheaper model) → survival (no LLM, still answers); 402/429 handled |
 | If using comfy: agent ID, token address, fees tab | ⏳ optional | not registered yet (see "comfy" below) |
 | Wanted: job worth paying for | ✅ | cheapest basket across 3 apps, ₹ saved |

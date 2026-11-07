@@ -24,7 +24,7 @@ export const BOT_URL = `https://t.me/${BOT_USERNAME}`;
 export const REPO_URL = "https://github.com/nikhil-pn/iva-grocery-agent";
 
 export const HUNT_FEE_0G = 0.2;
-export const DAILY_CAP_0G = 0.5;
+export const DAILY_CAP_0G = 2;
 
 export const CHAIN = {
   id: 16661,
@@ -108,7 +108,7 @@ export const PROOF: {
   },
   {
     icon: "🛑",
-    step: "Spend cap: API key “Iva” has credit_limit 0.5, reset_period daily (read back from GET /v1/api-keys)",
+    step: "Spend cap: API key “Iva” has credit_limit 2, reset_period daily (read back from GET /v1/api-keys)",
     note: "Enforced by 0G",
   },
   {

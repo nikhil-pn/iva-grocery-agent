@@ -19,7 +19,7 @@ She reads her own balance before every job and picks the best brain she can affo
 - a model about 50× cheaper when lean;
 - no AI at all in survival (still answering), at her spend cap.
 
-The spend cap is a 0.5 0G daily `credit_limit` enforced by 0G on her API key.
+The spend cap is a 2 0G daily `credit_limit` enforced by 0G on her API key.
 
 **And she can buy it (private beta):** say *order* and Iva fills your Zepto cart through **Zepto's official MCP**,
 with her 0G brain picking the products. She shows Zepto's bill and orders only after you reply YES (cash on delivery,

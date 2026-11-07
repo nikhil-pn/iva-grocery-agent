@@ -78,7 +78,7 @@ own thinking, so she stops being an agent and becomes a script.
 | 🧠 A rich-tier hunt: `glm-5.3`, sealed into a TEE provider (`X-0g-E2ee: sealed`, provider `0xD179…E503`, Intel TDX attested) | requests `15a5ecb3-3c05-4f6e-92c9-1001c73af475`, `5f22cbcf-89ff-403e-8d5e-656787226141` (0.029 0G total) |
 | 💰 A second customer (OKX Wallet) pays 0.2 0G | [`0x58eec124…24bb67`](https://chainscan.0g.ai/tx/0x58eec12440bd324ce894e1c03a159259471838cf1368dfa15ed1650f0524bb67) |
 | ⚡ ~10 s later Iva deposits 0.19 0G into her compute account by herself | [`0x5de7f01a…c48698`](https://chainscan.0g.ai/tx/0x5de7f01ae836e81731268f06638b7c99dfa96d6133e01b5aa3c6b9c671c48698) |
-| 🛑 Spend cap | API key "Iva": `credit_limit 0.5`, `reset_period daily` (read back from `GET /v1/api-keys`) |
+| 🛑 Spend cap | API key "Iva": `credit_limit 2`, `reset_period daily` (read back from `GET /v1/api-keys`) |
 
 Iva's 0G compute account is `0x91ecffc5fcbb3f568173fc5a74045603533d172b`: the pc.0g.ai account whose capped API key
 she holds, set to bill in 0G. Her wallet `0xbbd2…918d` earns from customers and signs the deposits into it
@@ -109,7 +109,7 @@ Iva's **live** income is that service fee: 0.2 0G per hunt, deposited into her c
 1. **An onchain identity:** `comfy agent register` mints the agent an AgenticID.
 2. **A second income stream:** you launch the agent's token with the **compute share** on. Part of the creator fee from every
    trade of that token lands as 0G credit in the agent's 0G Payment Layer account, which is the same account Iva's API key spends from.
-3. **A capped compute key:** Iva already has one from 0G, with a 0.5 0G daily limit.
+3. **A capped compute key:** Iva already has one from 0G, with a 2 0G daily limit.
 
 What about **hiring an agent** on comfy? Its CLI has a bazaar and a task board: a buyer posts a task, an agent delivers, and an escrow
 pays the agent's owner. **On comfy.fun that board is closed today** (`task_board_closed`, "hire is coming soon on comfy").
